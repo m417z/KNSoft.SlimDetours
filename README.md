@@ -1,56 +1,106 @@
-# Microsoft Research Detours Package
+| **English (en-US)** | [简体中文 (zh-CN)](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/README.zh-CN.md) |
+| --- | --- |
 
-Detours is a software package for monitoring and instrumenting API calls on Windows. Detours
-has been used by many ISVs and  is also  used by product teams at Microsoft. Detours is now available under
-a standard open source  license ([MIT](https://github.com/microsoft/Detours/blob/master/LICENSE.md)).  This simplifies licensing for programmers using Detours
-and allows the community to support Detours using open source tools and processes.
+<br>
 
-Detours is compatible with the Windows NT family of 
-operating systems: Windows NT, Windows XP, Windows Server 2003, Windows 7,
-Windows 8, and Windows 10.  It cannot be used by Windows Store apps
-because Detours requires APIs not available to those applications. 
-This repo contains the source code for version 4.0.1 of Detours.
+# KNSoft.SlimDetours
 
-For technical documentation on Detours, see the [Detours Wiki](https://github.com/microsoft/Detours/wiki).
-For directions on how to build and run samples, see the
-samples [README.txt](https://github.com/Microsoft/Detours/blob/master/samples/README.TXT) file.
+[![NuGet Downloads](https://img.shields.io/nuget/dt/KNSoft.SlimDetours)](https://www.nuget.org/packages/KNSoft.SlimDetours) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/KNSoft/KNSoft.SlimDetours/msbuild.yml)](https://github.com/KNSoft/KNSoft.SlimDetours/actions/workflows/msbuild.yml) ![PR Welcome](https://img.shields.io/badge/PR-welcome-0688CB.svg) [![GitHub License](https://img.shields.io/github/license/KNSoft/KNSoft.SlimDetours)](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/LICENSE)
 
-## Contributing
+[SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours) is an improved Windows API hooking library base on [Microsoft Detours](https://github.com/microsoft/Detours).
 
-The [`Detours`](https://github.com/microsoft/detours) repository is where development is done.
-Here are some ways you can participate in the project:
+## Feature
 
-* [Answer questions](https://github.com/microsoft/detours/issues) about using Detours.
-* [Improve the Wiki](https://github.com/microsoft/detours/wiki).
-* [Submit bugs](https://github.com/microsoft/detours/issues) and help us verify fixes and changes as they are checked in.
-* Review [source code changes](https://github.com/microsoft/detours/pulls).
+Compared to the original [Detours](https://github.com/microsoft/Detours), the advantages are:
 
-Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that
-you have the right to, and actually do, grant us the rights to use your contribution.
-For details, visit https://cla.opensource.microsoft.com.
+- New feature
+  - **Support delay hook (set hooks automatically when target DLL loaded)** [🔗 TechWiki: Implement Delay Hook](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Docs/TechWiki/Implement%20Delay%20Hook/README.md)
+  - **Automatically update threads when set hooks** [🔗 TechWiki: Update Threads Automatically When Applying Inline Hooks](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Docs/TechWiki/Update%20Threads%20Automatically%20When%20Applying%20Inline%20Hooks/README.md)
+- Improved
+  - **Avoid deadlocks when updating threads** [🔗 TechWiki: Avoid Deadlocking on The Heap When Updating Threads](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Docs/TechWiki/Avoid%20Deadlocking%20on%20The%20Heap%20When%20Updating%20Threads/README.md)
+  - Avoid occupying system reserved memory region [🔗 TechWiki: Avoid Occupying System Reserved Region When Allocating Trampoline](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Docs/TechWiki/Avoid%20Occupying%20System%20Reserved%20Region%20When%20Allocating%20Trampoline/README.md)
+  - Other bug fixes and code improvements
+- Lite
+  - **Depends on `Ntdll.dll` only**
+  - Retain API hooking functions only
+  - Remove support for ARM (ARM32), IA64, WinXP, GNUC
+  - Smaller binary size
+- Out-of-the-box
+  - NuGet package is released
 
-When you submit a pull request, a CLA bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
+## Usage
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+[![NuGet Downloads](https://img.shields.io/nuget/dt/KNSoft.SlimDetours)](https://www.nuget.org/packages/KNSoft.SlimDetours)
 
-## Issues, questions, and feedback
+### TL;DR
 
-* Open an issue on [GitHub Issues](https://github.com/Microsoft/detours/issues).
+KNSoft.SlimDetours package contains both of [SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours) and the original [Microsoft Detours](https://github.com/microsoft/Detours).
 
-## Mailing list for announcements
+Include header [SlimDetours.h](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/SlimDetours/SlimDetours.h) for KNSoft.SlimDetours, or header [detours.h](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/Detours/src/detours.h) for the original [Microsoft Detours](https://github.com/microsoft/Detours), then link compiled library `KNSoft.SlimDetours.lib`.
 
-The detours-announce mailing list is a low-traffic email list for important announcements 
-about the project, such as the availability of new versions of Detours.  To join it, send 
-an email to listserv@lists.research.microsoft.com with a 
-message body containing only the text SUBSCRIBE DETOURS-ANNOUNCE.
-To leave it, send an email to listserv@lists.research.microsoft.com with a 
-message body containing only the text UNSUBSCRIBE DETOURS-ANNOUNCE.
+NuGet package [KNSoft.SlimDetours](https://www.nuget.org/packages/KNSoft.SlimDetours) is out-of-the-box, install to project and the compiled library will be linked automatically.
 
+```C
+#include <KNSoft/SlimDetours/SlimDetours.h> // KNSoft.SlimDetours
+#include <KNSoft/SlimDetours/detours.h>     // Microsoft Detours
+```
+
+If your project configuration name is neither "Release" nor "Debug", [MSBuild sheet](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/KNSoft.SlimDetours.targets) in NuGet package cannot link compiled library automatically, link manually is required, for example:
+```C
+#pragma comment(lib, "Debug/KNSoft.SlimDetours.lib")
+```
+
+Usage is similiar to the original [Microsoft Detours](https://github.com/microsoft/Detours), but:
+
+- Function name begin with `"SlimDetours"`, most of return values are `NTSTATUS`, use `NT_SUCCESS` macro to check them.
+- Threads are updated automatically, `DetourUpdateThread` is removed.
+```C
+Status = SlimDetoursTransactionBegin();
+if (!NT_SUCCESS(Status))
+{
+    return Status;
+}
+Status = SlimDetoursAttach((PVOID*)&g_pfnXxx, Hooked_Xxx);
+if (!NT_SUCCESS(Status))
+{
+    SlimDetoursTransactionAbort();
+    return Status;
+}
+return SlimDetoursTransactionCommit();
+```
+
+### Delay Hook
+
+"Delay Hook" will set hooks automatically when target DLL loaded.
+
+For example, call `SlimDetoursDelayAttach` to hook `a.dll!FuncXxx` automatically when `a.dll` loaded:
+```C
+SlimDetoursDelayAttach((PVOID*)&g_pfnFuncXxx,
+                       Hooked_FuncXxx,
+                       L"a.dll",
+                       L"FuncXxx",
+                       NULL,
+                       NULL);
+```
+Demo: [DelayHook.c](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/Demo/DelayHook.c)
+
+## Compatibility
+
+Project building: only support for the latest MSVC generation tools and SDKs is considered, but it is generally more widely backward compatible.
+
+Artifact integration: it is widely backward compatible with MSVC generation tools and different compilation configurations (e.g., `/MD`, `/MT`).
+
+Runtime environment: NT6 or above OS, x86/x64/ARM64 platform.
+
+> [!CAUTION]
+> In beta stage, should be used with caution.
 
 ## License
 
-Copyright (c) Microsoft Corporation. All rights reserved.
+[![GitHub License](https://img.shields.io/github/license/KNSoft/KNSoft.SlimDetours)](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/LICENSE)
 
-Licensed under the [MIT](LICENSE.md) License.
+KNSoft.SlimDetours is licensed under the [MPL-2.0](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/LICENSE) license.
+
+Source is based on [Microsoft Detours](https://github.com/microsoft/Detours) which is licensed under the [MIT](https://github.com/microsoft/Detours/blob/main/LICENSE) license.
+
+Also uses [KNSoft.NDK](https://github.com/KNSoft/KNSoft.NDK) to access low-level Windows NT APIs and its Unit Test Framework.
