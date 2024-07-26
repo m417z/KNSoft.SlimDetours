@@ -59,18 +59,14 @@ static SYSTEM_BASIC_INFORMATION g_sbi = {
 };
 
 static HANDLE _detour_memory_heap = NULL;
-static RTL_RUN_ONCE g_stInitMemory = RTL_RUN_ONCE_INIT;
 
 static
-_Function_class_(RTL_RUN_ONCE_INIT_FN)
-_IRQL_requires_same_
-LOGICAL
-NTAPI
-detour_memory_init(
-    _Inout_ PRTL_RUN_ONCE RunOnce,
-    _Inout_opt_ PVOID Parameter,
-    _Inout_opt_ PVOID *Context)
+_Ret_notnull_
+HANDLE
+detour_memory_init(VOID)
 {
+    HANDLE hHeap;
+
     /* Initialize memory management information */
     NtQuerySystemInformation(SystemBasicInformation, &g_sbi, sizeof(g_sbi), NULL);
 #if defined(_WIN64)
@@ -89,14 +85,14 @@ detour_memory_init(
 #endif
 
     /* Initialize private heap */
-    _detour_memory_heap = RtlCreateHeap(HEAP_NO_SERIALIZE | HEAP_GROWABLE, NULL, 0, 0, NULL, NULL);
-    if (_detour_memory_heap == NULL)
+    hHeap = RtlCreateHeap(HEAP_NO_SERIALIZE | HEAP_GROWABLE, NULL, 0, 0, NULL, NULL);
+    if (hHeap == NULL)
     {
         DETOUR_TRACE("RtlCreateHeap failed, fallback to process default heap\n");
-        _detour_memory_heap = NtGetProcessHeap();
+        hHeap = NtGetProcessHeap();
     }
 
-    return TRUE;
+    return hHeap;
 }
 
 _Must_inspect_result_
@@ -108,12 +104,14 @@ detour_memory_alloc(
 {
     /*
      * detour_memory_alloc is called BEFORE any other detour_memory_* functions,
-     * otherwise should find another way to initialize.
+     * and only one thread that owning pending transaction could reach here,
+     * so it's safe to do the initialzation here and not use a lock.
      */
-    /* Don't need try/except */
-#pragma warning(disable: __WARNING_PROBE_NO_TRY)
-    RtlRunOnceExecuteOnce(&g_stInitMemory, detour_memory_init, NULL, NULL);
-#pragma warning(default: __WARNING_PROBE_NO_TRY)
+    if (_detour_memory_heap == NULL)
+    {
+        _detour_memory_heap = detour_memory_init();
+    }
+
     return RtlAllocateHeap(_detour_memory_heap, 0, Size);
 }
 
