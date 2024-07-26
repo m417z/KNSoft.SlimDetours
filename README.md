@@ -52,19 +52,20 @@ If your project configuration name is neither "Release" nor "Debug", [MSBuild sh
 
 Usage is similiar to the original [Microsoft Detours](https://github.com/microsoft/Detours), but:
 
-- Function name begin with `"SlimDetours"`, most of return values are `NTSTATUS`, use `NT_SUCCESS` macro to check them.
-- Threads are updated automatically, `DetourUpdateThread` is removed.
+- Function name begin with `"SlimDetours"`
+- Most of return values are [`HRESULT`](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-erref/0642cb2f-2075-4469-918c-4441e69c548a) that wraps [`NTSTATUS`](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-erref/87fba13e-bf06-450e-83b1-9241dc81e781) by [`HRESULT_FROM_NT`](https://learn.microsoft.com/en-us/windows/win32/api/winerror/nf-winerror-hresult_from_nt) macro, use macros like [`SUCCEEDED`](https://learn.microsoft.com/en-us/windows/win32/api/winerror/nf-winerror-succeeded) to check them.
+- [Threads are updated automatically](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Docs/TechWiki/Update%20Threads%20Automatically%20When%20Applying%20Inline%20Hooks/README.md), [`DetourUpdateThread`](https://github.com/microsoft/Detours/wiki/DetourUpdateThread) has been omitted.
 ```C
-Status = SlimDetoursTransactionBegin();
-if (!NT_SUCCESS(Status))
+hr = SlimDetoursTransactionBegin();
+if (FAILED(hr))
 {
-    return Status;
+    return hr;
 }
-Status = SlimDetoursAttach((PVOID*)&g_pfnXxx, Hooked_Xxx);
-if (!NT_SUCCESS(Status))
+hr = SlimDetoursAttach((PVOID*)&g_pfnXxx, Hooked_Xxx);
+if (FAILED(hr))
 {
     SlimDetoursTransactionAbort();
-    return Status;
+    return hr;
 }
 return SlimDetoursTransactionCommit();
 ```

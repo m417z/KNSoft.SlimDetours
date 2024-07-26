@@ -33,19 +33,19 @@
 该示例中，先调用了`SlimDetoursDelayAttach`注册对`User32.dll!EqualRect`API的延迟挂钩，并通过检查它和`LdrGetDllHandle`的返回值确认此时`User32.dll`并未加载：
 ```C
 /* Register SlimDetours delay hook */
-Status = SlimDetoursDelayAttach((PVOID*)&g_pfnEqualRect,
-                                Hooked_EqualRect,
-                                g_usUser32.Buffer,
-                                g_asEqualRect.Buffer,
-                                DelayAttachCallback,
-                                NULL);
-if (!NT_SUCCESS(Status))
+hr = SlimDetoursDelayAttach((PVOID*)&g_pfnEqualRect,
+                             Hooked_EqualRect,
+                             g_usUser32.Buffer,
+                             g_asEqualRect.Buffer,
+                             DelayAttachCallback,
+                             NULL);
+if (FAILED(hr))
 {
-    TEST_FAIL("SlimDetoursDelayAttach failed with 0x%08lX\n", Status);
+    TEST_FAIL("SlimDetoursDelayAttach failed with 0x%08lX\n", hr);
     return;
-} else if (Status != STATUS_PENDING)
+} else if (hr != HRESULT_FROM_NT(STATUS_PENDING))
 {
-    TEST_FAIL("SlimDetoursDelayAttach succeeded with 0x%08lX, which is not using delay attach\n", Status);
+    TEST_FAIL("SlimDetoursDelayAttach succeeded with 0x%08lX, which is not using delay attach\n", hr);
     return;
 }
 

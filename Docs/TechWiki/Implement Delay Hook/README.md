@@ -33,19 +33,19 @@ Although Microsoft Learning prompts that related APIs may be changed or removed,
 In this example, `SlimDetoursDelayAttach` is called to register a delay hook for `User32.dll!EqualRect` API, and confirm that the `User32.dll` is not loaded at this point by checking the return values from it and `LdrGetDllHandle`:
 ```C
 /* Register SlimDetours delay hook */
-Status = SlimDetoursDelayAttach((PVOID*)&g_pfnEqualRect,
-                                Hooked_EqualRect,
-                                g_usUser32.Buffer,
-                                g_asEqualRect.Buffer,
-                                DelayAttachCallback,
-                                NULL);
-if (!NT_SUCCESS(Status))
+hr = SlimDetoursDelayAttach((PVOID*)&g_pfnEqualRect,
+                             Hooked_EqualRect,
+                             g_usUser32.Buffer,
+                             g_asEqualRect.Buffer,
+                             DelayAttachCallback,
+                             NULL);
+if (FAILED(hr))
 {
-    TEST_FAIL("SlimDetoursDelayAttach failed with 0x%08lX\n", Status);
+    TEST_FAIL("SlimDetoursDelayAttach failed with 0x%08lX\n", hr);
     return;
-} else if (Status != STATUS_PENDING)
+} else if (hr != HRESULT_FROM_NT(STATUS_PENDING))
 {
-    TEST_FAIL("SlimDetoursDelayAttach succeeded with 0x%08lX, which is not using delay attach\n", Status);
+    TEST_FAIL("SlimDetoursDelayAttach succeeded with 0x%08lX, which is not using delay attach\n", hr);
     return;
 }
 

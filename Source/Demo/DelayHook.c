@@ -14,18 +14,18 @@ static
 VOID
 CALLBACK
 DelayAttachCallback(
-    _In_ NTSTATUS Status,
+    _In_ HRESULT Result,
     _In_ PVOID* ppPointer,
     _In_ PCWSTR DllName,
     _In_ PCSTR Function,
     _In_opt_ PVOID Context)
 {
-    UnitTest_FormatMessage("Delay hook callback: Status = 0x%08lX, DllName = %ls, Function = %hs, Context = 0x%p\n",
-                           Status,
+    UnitTest_FormatMessage("Delay hook callback: Result = 0x%08lX, DllName = %ls, Function = %hs, Context = 0x%p\n",
+                           Result,
                            DllName,
                            Function,
                            Context);
-    g_bDelayAttach = NT_SUCCESS(Status) &&
+    g_bDelayAttach = SUCCEEDED(Result) &&
         _wcsicmp(DllName, g_usUser32.Buffer) == 0 &&
         _stricmp(Function, g_asEqualRect.Buffer) == 0;
 }
@@ -33,24 +33,25 @@ DelayAttachCallback(
 static TEST_DECL(DelayHook)
 {
     NTSTATUS Status;
+    HRESULT hr;
     PVOID hUser32;
     FN_EqualRect* pfnEqualRect;
     RECT rc1 = { 0 }, rc2 = { 0 };
 
     /* Register SlimDetours delay hook */
-    Status = SlimDetoursDelayAttach((PVOID*)&g_pfnEqualRect,
-                                    Hooked_EqualRect,
-                                    g_usUser32.Buffer,
-                                    g_asEqualRect.Buffer,
-                                    DelayAttachCallback,
-                                    NULL);
-    if (!NT_SUCCESS(Status))
+    hr = SlimDetoursDelayAttach((PVOID*)&g_pfnEqualRect,
+                                Hooked_EqualRect,
+                                g_usUser32.Buffer,
+                                g_asEqualRect.Buffer,
+                                DelayAttachCallback,
+                                NULL);
+    if (FAILED(hr))
     {
-        TEST_FAIL("SlimDetoursDelayAttach failed with 0x%08lX\n", Status);
+        TEST_FAIL("SlimDetoursDelayAttach failed with 0x%08lX\n", hr);
         return;
-    } else if (Status != STATUS_PENDING)
+    } else if (hr != HRESULT_FROM_NT(STATUS_PENDING))
     {
-        TEST_FAIL("SlimDetoursDelayAttach succeeded with 0x%08lX, which is not using delay attach\n", Status);
+        TEST_FAIL("SlimDetoursDelayAttach succeeded with 0x%08lX, which is not using delay attach\n", hr);
         return;
     }
 

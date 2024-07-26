@@ -89,7 +89,7 @@ HRESULT HookTransactionBegin(
 {
     if (EngineType == EngineSlimDetours)
     {
-        return HRESULT_FROM_NT(SlimDetoursTransactionBegin());
+        return SlimDetoursTransactionBegin();
     } else if (EngineType == EngineMicrosoftDetours)
     {
         return HRESULT_FROM_WIN32(DetourTransactionBegin());
@@ -103,7 +103,7 @@ HRESULT HookTransactionAbort(
 {
     if (EngineType == EngineSlimDetours)
     {
-        return HRESULT_FROM_NT(SlimDetoursTransactionAbort());
+        return SlimDetoursTransactionAbort();
     } else if (EngineType == EngineMicrosoftDetours)
     {
         return HRESULT_FROM_WIN32(DetourTransactionAbort());
@@ -117,7 +117,7 @@ HRESULT HookTransactionCommit(
 {
     if (EngineType == EngineSlimDetours)
     {
-        return HRESULT_FROM_NT(SlimDetoursTransactionCommit());
+        return SlimDetoursTransactionCommit();
     } else if (EngineType == EngineMicrosoftDetours)
     {
         return HRESULT_FROM_WIN32(DetourTransactionCommit());
@@ -134,7 +134,7 @@ HRESULT HookAttach(
 {
     if (EngineType == EngineSlimDetours)
     {
-        return HRESULT_FROM_NT(Enable ? SlimDetoursAttach(ppPointer, pDetour) : SlimDetoursDetach(ppPointer, pDetour));
+        return Enable ? SlimDetoursAttach(ppPointer, pDetour) : SlimDetoursDetach(ppPointer, pDetour);
     } else if (EngineType == EngineMicrosoftDetours)
     {
         return HRESULT_FROM_WIN32(Enable ? DetourAttach(ppPointer, pDetour) : DetourDetach(ppPointer, pDetour));

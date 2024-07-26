@@ -23,14 +23,6 @@ FN_LdrRegisterDllNotification(
 
 typedef struct _DETOUR_DELAY_ATTACH DETOUR_DELAY_ATTACH, *PDETOUR_DELAY_ATTACH;
 
-typedef
-VOID(CALLBACK* DETOUR_DELAY_ATTACH_CALLBACK)(
-    _In_ NTSTATUS Status,
-    _In_ PVOID* ppPointer,
-    _In_ PCWSTR DllName,
-    _In_ PCSTR Function,
-    _In_opt_ PVOID Context);
-
 struct _DETOUR_DELAY_ATTACH
 {
     PDETOUR_DELAY_ATTACH pNext;
@@ -55,7 +47,7 @@ static RTL_SRWLOCK g_DelayedAttachesLock = RTL_SRWLOCK_INIT;
 static PVOID g_DllNotifyCookie = NULL;
 static PDETOUR_DELAY_ATTACH g_DelayedAttaches = NULL;
 
-NTSTATUS
+HRESULT
 NTAPI
 SlimDetoursTransactionBegin(VOID)
 {
@@ -64,7 +56,7 @@ SlimDetoursTransactionBegin(VOID)
     // Make sure only one thread can start a transaction.
     if (_InterlockedCompareExchangePointer(&s_nPendingThreadId, NtGetCurrentThreadId(), 0) != 0)
     {
-        return STATUS_TRANSACTIONAL_CONFLICT;
+        return HRESULT_FROM_NT(STATUS_TRANSACTIONAL_CONFLICT);
     }
 
     // Make sure the trampoline pages are writable.
@@ -82,16 +74,16 @@ SlimDetoursTransactionBegin(VOID)
     }
 
     s_pPendingOperations = NULL;
-    return STATUS_SUCCESS;
+    return HRESULT_FROM_NT(STATUS_SUCCESS);
 
 fail:
 #pragma warning(disable: __WARNING_INTERLOCKED_ACCESS)
     s_nPendingThreadId = 0;
 #pragma warning(default: __WARNING_INTERLOCKED_ACCESS)
-    return Status;
+    return HRESULT_FROM_NT(Status);
 }
 
-NTSTATUS
+HRESULT
 NTAPI
 SlimDetoursTransactionAbort(VOID)
 {
@@ -101,7 +93,7 @@ SlimDetoursTransactionAbort(VOID)
 
     if (s_nPendingThreadId != NtGetCurrentThreadId())
     {
-        return STATUS_TRANSACTIONAL_CONFLICT;
+        return HRESULT_FROM_NT(STATUS_TRANSACTIONAL_CONFLICT);
     }
 
     // Restore all of the page permissions.
@@ -135,10 +127,10 @@ SlimDetoursTransactionAbort(VOID)
     s_phSuspendedThreads = NULL;
     s_ulSuspendedThreadCount = 0;
     s_nPendingThreadId = 0;
-    return STATUS_SUCCESS;
+    return HRESULT_FROM_NT(STATUS_SUCCESS);
 }
 
-NTSTATUS
+HRESULT
 NTAPI
 SlimDetoursTransactionCommit(VOID)
 {
@@ -154,7 +146,7 @@ SlimDetoursTransactionCommit(VOID)
 
     if (s_nPendingThreadId != NtGetCurrentThreadId())
     {
-        return STATUS_TRANSACTIONAL_CONFLICT;
+        return HRESULT_FROM_NT(STATUS_TRANSACTIONAL_CONFLICT);
     }
 
     if (s_pPendingOperations == NULL)
@@ -267,23 +259,23 @@ _exit:
     s_ulSuspendedThreadCount = 0;
     s_nPendingThreadId = 0;
 
-    return STATUS_SUCCESS;
+    return HRESULT_FROM_NT(STATUS_SUCCESS);
 }
 
-NTSTATUS
+HRESULT
 NTAPI
 SlimDetoursAttach(
     _Inout_ PVOID* ppPointer,
     _In_ PVOID pDetour)
 {
-    NTSTATUS Status = STATUS_SUCCESS;
+    NTSTATUS Status;
     PVOID pMem;
     SIZE_T sMem;
     DWORD dwOld;
 
     if (s_nPendingThreadId != NtGetCurrentThreadId())
     {
-        return STATUS_TRANSACTIONAL_CONFLICT;
+        return HRESULT_FROM_NT(STATUS_TRANSACTIONAL_CONFLICT);
     }
 
     PBYTE pbTarget = (PBYTE)*ppPointer;
@@ -316,7 +308,7 @@ fail:
         {
             detour_memory_free(o);
         }
-        return Status;
+        return HRESULT_FROM_NT(Status);
     }
 
     pTrampoline = detour_alloc_trampoline(pbTarget);
@@ -470,23 +462,23 @@ fail:
     o->pNext = s_pPendingOperations;
     s_pPendingOperations = o;
 
-    return STATUS_SUCCESS;
+    return HRESULT_FROM_NT(STATUS_SUCCESS);
 }
 
-NTSTATUS
+HRESULT
 NTAPI
 SlimDetoursDetach(
     _Inout_ PVOID* ppPointer,
     _In_ PVOID pDetour)
 {
-    NTSTATUS Status = STATUS_SUCCESS;
+    NTSTATUS Status;
     PVOID pMem;
     SIZE_T sMem;
     DWORD dwOld;
 
     if (s_nPendingThreadId != NtGetCurrentThreadId())
     {
-        return STATUS_TRANSACTIONAL_CONFLICT;
+        return HRESULT_FROM_NT(STATUS_TRANSACTIONAL_CONFLICT);
     }
 
     PDETOUR_OPERATION o = detour_memory_alloc(sizeof(DETOUR_OPERATION));
@@ -499,7 +491,7 @@ fail:
         {
             detour_memory_free(o);
         }
-        return Status;
+        return HRESULT_FROM_NT(Status);
     }
 
     PDETOUR_TRAMPOLINE pTrampoline = (PDETOUR_TRAMPOLINE)detour_skip_jmp((PBYTE)*ppPointer);
@@ -533,13 +525,13 @@ fail:
     o->pNext = s_pPendingOperations;
     s_pPendingOperations = o;
 
-    return STATUS_SUCCESS;
+    return HRESULT_FROM_NT(STATUS_SUCCESS);
 }
 
 #if (NTDDI_VERSION >= NTDDI_WIN6)
 
 static
-NTSTATUS
+HRESULT
 NTAPI
 detour_attach_now(
     _Out_ PVOID* ppPointer,
@@ -548,6 +540,7 @@ detour_attach_now(
     _In_ PCSTR Function)
 {
     NTSTATUS Status;
+    HRESULT hr;
     ANSI_STRING FunctionString;
     ULONG Ordinal;
     PANSI_STRING pFunctionString;
@@ -558,7 +551,7 @@ detour_attach_now(
         Ordinal = (ULONG)(ULONG_PTR)Function;
         if (Ordinal == 0)
         {
-            return STATUS_INVALID_PARAMETER;
+            return HRESULT_FROM_NT(STATUS_INVALID_PARAMETER);
         }
         pFunctionString = NULL;
     } else
@@ -567,7 +560,7 @@ detour_attach_now(
         Status = RtlInitAnsiStringEx(&FunctionString, Function);
         if (!NT_SUCCESS(Status))
         {
-            return Status;
+            return HRESULT_FROM_NT(Status);
         }
         pFunctionString = &FunctionString;
     }
@@ -581,20 +574,20 @@ detour_attach_now(
 #pragma warning(default: __WARNING_INVALID_PARAM_VALUE_1)
     if (!NT_SUCCESS(Status))
     {
-        return Status;
+        return HRESULT_FROM_NT(Status);
     }
 
-    Status = SlimDetoursTransactionBegin();
-    if (!NT_SUCCESS(Status))
+    hr = SlimDetoursTransactionBegin();
+    if (FAILED(hr))
     {
-        return Status;
+        return hr;
     }
     *ppPointer = FunctionAddress;
-    Status = SlimDetoursAttach(ppPointer, pDetour);
-    if (!NT_SUCCESS(Status))
+    hr = SlimDetoursAttach(ppPointer, pDetour);
+    if (FAILED(Status))
     {
         SlimDetoursTransactionAbort();
-        return Status;
+        return hr;
     }
     return SlimDetoursTransactionCommit();
 }
@@ -607,7 +600,7 @@ detour_dll_notify_proc(
     _In_ PCLDR_DLL_NOTIFICATION_DATA NotificationData,
     _In_opt_ PVOID Context)
 {
-    NTSTATUS Status;
+    HRESULT hr;
     PDETOUR_DELAY_ATTACH pAttach, pPrevAttach, pNextAttach;
 
     if (NotificationReason != LDR_DLL_NOTIFICATION_REASON_LOADED || g_DelayedAttaches == NULL)
@@ -629,13 +622,13 @@ detour_dll_notify_proc(
         }
 
         /* Attach detours */
-        Status = detour_attach_now(pAttach->ppPointer,
-                                   pAttach->pDetour,
-                                   NotificationData->Loaded.DllBase,
-                                   pAttach->pszFunction);
+        hr = detour_attach_now(pAttach->ppPointer,
+                               pAttach->pDetour,
+                               NotificationData->Loaded.DllBase,
+                               pAttach->pszFunction);
         if (pAttach->pfnCallback != NULL)
         {
-            pAttach->pfnCallback(Status,
+            pAttach->pfnCallback(hr,
                                  pAttach->ppPointer,
                                  pAttach->usDllName.Buffer,
                                  pAttach->pszFunction,
@@ -674,7 +667,7 @@ detour_init_delay_attach(
     return NT_SUCCESS(g_lDelayAttachStatus);
 }
 
-NTSTATUS
+HRESULT
 NTAPI
 SlimDetoursDelayAttach(
     _In_ PVOID* ppPointer,
@@ -685,6 +678,7 @@ SlimDetoursDelayAttach(
     _In_opt_ PVOID Context)
 {
     NTSTATUS Status;
+    HRESULT hr;
     UNICODE_STRING DllNameString;
     PVOID DllBase;
     PDETOUR_DELAY_ATTACH NewNode;
@@ -695,7 +689,7 @@ SlimDetoursDelayAttach(
 #pragma warning(default: __WARNING_PROBE_NO_TRY)
     if (!NT_SUCCESS(Status))
     {
-        return Status;
+        return HRESULT_FROM_NT(Status);
     }
 
     /* Check if Dll is already loaded */
@@ -704,21 +698,21 @@ SlimDetoursDelayAttach(
     if (NT_SUCCESS(Status))
     {
         /* Attach immediately if Dll is loaded */
-        Status = detour_attach_now(ppPointer, pDetour, DllBase, Function);
+        hr = detour_attach_now(ppPointer, pDetour, DllBase, Function);
         if (Callback != NULL)
         {
-            Callback(Status, ppPointer, DllName, Function, Context);
+            Callback(hr, ppPointer, DllName, Function, Context);
         }
-        return Status;
+        return hr;
     } else if (Status != STATUS_DLL_NOT_FOUND)
     {
-        return Status;
+        return HRESULT_FROM_NT(Status);
     }
 
     /* Get LdrRegisterDllNotification */
     if (g_pfnLdrRegisterDllNotification == NULL)
     {
-        return g_lDelayAttachStatus;
+        return HRESULT_FROM_NT(g_lDelayAttachStatus);
     }
 
     /* Insert into delayed attach list */
@@ -750,7 +744,7 @@ SlimDetoursDelayAttach(
 
 _Exit:
     RtlReleaseSRWLockExclusive(&g_DelayedAttachesLock);
-    return Status;
+    return HRESULT_FROM_NT(Status);
 }
 
 #endif /* (NTDDI_VERSION >= NTDDI_WIN6) */

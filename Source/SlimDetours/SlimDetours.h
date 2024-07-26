@@ -18,10 +18,6 @@
 
 #include <Windows.h>
 
-#ifndef NT_SUCCESS
-#define NT_SUCCESS(Status) (((NTSTATUS)(Status)) >= 0)
-#endif
-
 EXTERN_C_START
 
 /* Instruction Target Macros */
@@ -29,31 +25,41 @@ EXTERN_C_START
 #define DETOUR_INSTRUCTION_TARGET_NONE ((PVOID)0)
 #define DETOUR_INSTRUCTION_TARGET_DYNAMIC ((PVOID)(LONG_PTR)-1)
 
-typedef
-VOID(CALLBACK* DETOUR_DELAY_ATTACH_CALLBACK)(
-    _In_ NTSTATUS Status,
-    _In_ PVOID* ppPointer,
-    _In_ PCWSTR DllName,
-    _In_ PCSTR Function,
-    _In_opt_ PVOID Context);
-
 #pragma region APIs
 
-NTSTATUS NTAPI SlimDetoursTransactionBegin(VOID);
+HRESULT
+NTAPI
+SlimDetoursTransactionBegin(VOID);
 
-NTSTATUS NTAPI SlimDetoursTransactionAbort(VOID);
+HRESULT
+NTAPI
+SlimDetoursTransactionAbort(VOID);
 
-NTSTATUS NTAPI SlimDetoursTransactionCommit(VOID);
+HRESULT
+NTAPI
+SlimDetoursTransactionCommit(VOID);
 
-NTSTATUS NTAPI SlimDetoursAttach(
+HRESULT
+NTAPI
+SlimDetoursAttach(
     _Inout_ PVOID* ppPointer,
     _In_ PVOID pDetour);
 
-NTSTATUS NTAPI SlimDetoursDetach(
+HRESULT
+NTAPI
+SlimDetoursDetach(
     _Inout_ PVOID* ppPointer,
     _In_ PVOID pDetour);
 
 #if (NTDDI_VERSION >= NTDDI_WIN6)
+
+typedef
+VOID(CALLBACK* DETOUR_DELAY_ATTACH_CALLBACK)(
+    _In_ HRESULT Result,
+    _In_ PVOID* ppPointer,
+    _In_ PCWSTR DllName,
+    _In_ PCSTR Function,
+    _In_opt_ PVOID Context);
 
 /// <summary>
 /// Delay hook, set hooks automatically when target DLL loaded.
@@ -65,12 +71,14 @@ NTSTATUS NTAPI SlimDetoursDetach(
 /// <param name="Callback">Optional. Callback to receive delay hook notification.</param>
 /// <param name="Context">Optional. A parameter to be passed to the callback function.</param>
 /// <returns>
-/// Returns NTSTATUS.
-/// STATUS_PENDING: Delay hook register successfully.
+/// Returns HRESULT.
+/// HRESULT_FROM_NT(STATUS_PENDING): Delay hook register successfully.
 /// Other success status: Hook is succeeded right now, delay hook won't execute.
-/// Otherwise, returns an error status.
+/// Otherwise, returns an error HRESULT from NTSTATUS.
 /// </returns>
-NTSTATUS NTAPI SlimDetoursDelayAttach(
+HRESULT
+NTAPI
+SlimDetoursDelayAttach(
     _In_ PVOID* ppPointer,
     _In_ PVOID pDetour,
     _In_ PCWSTR DllName,
@@ -113,7 +121,7 @@ struct SlimDetoursIsFunctionPointer<T*> : std::is_function<typename std::remove_
 };
 
 template<typename T, typename std::enable_if<SlimDetoursIsFunctionPointer<T>::value, int>::type = 0>
-NTSTATUS
+HRESULT
 SlimDetoursAttach(
     _Inout_ T* ppPointer,
     _In_ T pDetour) noexcept
@@ -122,7 +130,7 @@ SlimDetoursAttach(
 }
 
 template<typename T, typename std::enable_if<SlimDetoursIsFunctionPointer<T>::value, int>::type = 0>
-NTSTATUS
+HRESULT
 SlimDetoursDetach(
     _Inout_ T* ppPointer,
     _In_ T pDetour) noexcept
@@ -133,7 +141,7 @@ SlimDetoursDetach(
 #if (NTDDI_VERSION >= NTDDI_WIN6)
 
 template<typename T, typename std::enable_if<SlimDetoursIsFunctionPointer<T>::value, int>::type = 0>
-NTSTATUS
+HRESULT
 SlimDetoursDelayAttach(
     _In_ T* ppPointer,
     _In_ T pDetour,

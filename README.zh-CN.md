@@ -52,19 +52,20 @@ NuGet包[KNSoft.SlimDetours](https://www.nuget.org/packages/KNSoft.SlimDetours)�
 
 用法与原版[Microsoft Detours](https://github.com/microsoft/Detours)相似，除了：
 
-- 函数名以`"SlimDetours"`开头，大多数返回值是`NTSTATUS`，使用`NT_SUCCESS`宏检查。
-- 线程会被自动更新，`DetourUpdateThread`已移除。
+- 函数名以`"SlimDetours"`开头
+- 大多数返回值是用[`HRESULT_FROM_NT`](https://learn.microsoft.com/en-us/windows/win32/api/winerror/nf-winerror-hresult_from_nt)宏包装[`NTSTATUS`](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-erref/87fba13e-bf06-450e-83b1-9241dc81e781)而来的[`HRESULT`](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-erref/0642cb2f-2075-4469-918c-4441e69c548a)，使用类似[`SUCCEEDED`](https://learn.microsoft.com/en-us/windows/win32/api/winerror/nf-winerror-succeeded) 的宏检查它们。
+- [线程会被自动更新](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Docs/TechWiki/Update%20Threads%20Automatically%20When%20Applying%20Inline%20Hooks/README.zh-CN.md)，[`DetourUpdateThread`](https://github.com/microsoft/Detours/wiki/DetourUpdateThread)已被省去。
 ```C
-Status = SlimDetoursTransactionBegin();
-if (!NT_SUCCESS(Status))
+hr = SlimDetoursTransactionBegin();
+if (FAILED(hr))
 {
-    return Status;
+    return hr;
 }
-Status = SlimDetoursAttach((PVOID*)&g_pfnXxx, Hooked_Xxx);
-if (!NT_SUCCESS(Status))
+hr = SlimDetoursAttach((PVOID*)&g_pfnXxx, Hooked_Xxx);
+if (FAILED(hr))
 {
     SlimDetoursTransactionAbort();
-    return Status;
+    return hr;
 }
 return SlimDetoursTransactionCommit();
 ```
