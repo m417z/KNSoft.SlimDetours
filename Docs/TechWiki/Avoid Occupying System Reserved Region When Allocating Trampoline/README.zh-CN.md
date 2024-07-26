@@ -28,7 +28,7 @@ static PVOID    s_pSystemRegionUpperBound   = (PVOID)(ULONG_PTR)0x80000000;
 ```
 同样注意到此问题的[jdu2600](https://github.com/jdu2600)为[Detours](https://github.com/microsoft/Detours)开了一个非官方的PR [microsoft/Detours PR #307](https://github.com/microsoft/Detours/pull/307) 想更新这个范围以适配最新的Windows。
 
-[mhook](https://github.com/martona/mhook)与[Detours](https://github.com/microsoft/Detours)一样也是一个熟知的Windows API挂钩库，遗憾的是它似乎没有考虑到这个问题。
+[MinHook](https://github.com/TsudaKageyu/minhook)与[mhook](https://github.com/martona/mhook)都是熟知的Windows API挂钩库，遗憾的是它们似乎都没有考虑到这个问题。
 
 ## SlimDetours的实现
 

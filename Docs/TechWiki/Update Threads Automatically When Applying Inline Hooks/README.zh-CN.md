@@ -24,11 +24,15 @@ LONG WINAPI DetourUpdateThread(_In_ HANDLE hThread);
 > [!TIP]
 > 虽然它的官方示例“[Using Detours](https://github.com/microsoft/Detours/wiki/Using-Detours)”中有`DetourUpdateThread(GetCurrentThread())`这样的代码，但这用法无意义且无效，应使用其更新进程中除当前线程外的所有线程，详见[`DetourUpdateThread`](https://github.com/microsoft/Detours/wiki/DetourUpdateThread)。但即便以正确的方式更新线程，也会带来一个新的风险，见[🔗 技术Wiki：更新线程时避免堆死锁](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Docs/TechWiki/Avoid%20Deadlocking%20on%20The%20Heap%20When%20Updating%20Threads/README.zh-CN.md)。
 
+### MinHook
+
+[MinHook](https://github.com/TsudaKageyu/minhook)做的比较好，它在挂钩（和脱钩）时自动更新线程，并且像[Detours](https://github.com/microsoft/Detours)一样准确地更新线程上下文中的PC（程序计数器）。
+
 ### mhook
 
-[mhook](https://github.com/martona/mhook)与[Detours](https://github.com/microsoft/Detours)一样也是一个熟知的Windows API挂钩库，它在挂钩（和脱钩）时自动更新线程，调用者无需关心此问题，实现参考[mhook/mhook-lib/mhook.cpp于e58a58ca · martona/mhook](https://github.com/martona/mhook/blob/e58a58ca31dbe14f202b9b26315bff9f7a32598c/mhook-lib/mhook.cpp#L557)。
+[mhook](https://github.com/martona/mhook)在挂钩（和脱钩）时自动更新线程，实现参考[mhook/mhook-lib/mhook.cpp于e58a58ca · martona/mhook](https://github.com/martona/mhook/blob/e58a58ca31dbe14f202b9b26315bff9f7a32598c/mhook-lib/mhook.cpp#L557)。
 
-但它更新线程的方式比起上述的[Detours](https://github.com/microsoft/Detours)则有点笨拙，若线程正好位于要修改指令的区域则等待100毫秒，最多尝试3次：
+但它更新线程的方式比起上述几个则有点笨拙，若线程正好位于要修改指令的区域则等待100毫秒，最多尝试3次：
 ```C
 while (GetThreadContext(hThread, &ctx))
 {

@@ -90,16 +90,18 @@ Worker Thread	Demo.exe!SetHookThread	Demo.exe!__acrt_lock
 ```
 Use [SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours) run this demo `"Demo.exe -Run DeadLock -Engine=SlimDetours"` will pass successfully.
 
-## How did mhook and SlimDetours avoid this problem?
+## How did other hooking libraries avoid this problem?
 
-[mhook](https://github.com/martona/mhook) is a well-known Windows API hooking library like [Detours](https://github.com/microsoft/Detours), it uses [`Virtual­Alloc`](https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-virtualalloc) to allocate memory pages instead of [`Heap­Alloc`](https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapalloc) to allocate heap memory, which is a solution mentioned at the end of the above article.
+[mhook](https://github.com/martona/mhook) uses [`Virtual­Alloc`](https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-virtualalloc) to allocate memory pages instead of [`Heap­Alloc`](https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapalloc) to allocate heap memory, which is a solution mentioned at the end of the above article.
 
-[SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours) created a new private heap for internal use, which avoids this problem and saves memory usage:
+Both of [MinHook](https://github.com/TsudaKageyu/minhook) and [SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours) created a new private heap for internal use, which avoids this problem and saves memory usage:
 ```C
 _detour_memory_heap = RtlCreateHeap(HEAP_NO_SERIALIZE | HEAP_GROWABLE, NULL, 0, 0, NULL, NULL);
 ```
 > [!NOTE]
 > [Detours](https://github.com/microsoft/Detours) already has a transaction mechanism, and [SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours)' new feature "[Delay Hook](../Implement%20Delay%20Hook/README.md)" also uses SRW locks, so this heap does not need serialized access.
+
+[MinHook](https://github.com/TsudaKageyu/minhook) creates in its initialization function `MH_Initialize`, and [SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours) creates in one-time initialization in the first called memory allocation function, so there is no and no need for a separate initialization function.
 
 <br>
 <hr>

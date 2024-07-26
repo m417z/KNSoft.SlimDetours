@@ -90,16 +90,18 @@ Worker Thread	Demo.exe!SetHookThread	Demo.exe!__acrt_lock
 ```
 使用[SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours)运行此示例`"Demo.exe -Run DeadLock -Engine=SlimDetours"`则能顺利通过。
 
-## mhook与SlimDetours如何避免这个问题？
+## 其它挂钩库如何避免这个问题？
 
-[mhook](https://github.com/martona/mhook)与[Detours](https://github.com/microsoft/Detours)一样也是一个熟知的Windows API挂钩库，它使用[`Virtual­Alloc`](https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-virtualalloc)分配内存页代替[`Heap­Alloc`](https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapalloc)分配堆内存，是上文末尾提到的一个解决方案。
+[mhook](https://github.com/martona/mhook)使用[`Virtual­Alloc`](https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-virtualalloc)分配内存页代替[`Heap­Alloc`](https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapalloc)分配堆内存，是上文末尾提到的一个解决方案。
 
-[SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours)新创建了一个私有堆供内部使用，避免此问题的同时也节约了内存使用：
+[MinHook](https://github.com/TsudaKageyu/minhook)与[SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours)都新创建了一个私有堆供内部使用，避免此问题的同时也节约了内存使用：
 ```C
 _detour_memory_heap = RtlCreateHeap(HEAP_NO_SERIALIZE | HEAP_GROWABLE, NULL, 0, 0, NULL, NULL);
 ```
 > [!NOTE]
 > [Detours](https://github.com/microsoft/Detours)已有事务机制，[SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours)新添功能“[延迟挂钩](../Implement%20Delay%20Hook/README.zh-CN.md)”也用了[SRW锁](https://learn.microsoft.com/en-us/windows/win32/sync/slim-reader-writer--srw--locks)，所以此堆无需序列化访问。
+
+[MinHook](https://github.com/TsudaKageyu/minhook)在其初始化函数`MH_Initialize`中创建，而[SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours)在首个被调用的内存分配函数中进行一次初始化时创建，故没有也不需要单独的初始化函数。
 
 <br>
 <hr>

@@ -24,11 +24,15 @@ But [Detours](https://github.com/microsoft/Detours) updates threads very precise
 > [!TIP]
 > While its official example "[Using Detours](https://github.com/microsoft/Detours/wiki/Using-Detours)" has code like `DetourUpdateThread(GetCurrentThread())`, such usage is pointless and invalid, and should be used to update all threads in the process except the current thread, see also: [`DetourUpdateThread`](https://github.com/microsoft/Detours/wiki/DetourUpdateThread). But even updating threads in the right way, it also brings a new risk, see [🔗 TechWiki: Avoid Deadlocking on The Heap When Updating Threads](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Docs/TechWiki/Avoid%20Deadlocking%20on%20The%20Heap%20When%20Updating%20Threads/README.md).
 
+### MinHook
+
+[MinHook](https://github.com/TsudaKageyu/minhook) does a better job, it updates threads automatically when set (or unset) hooks, and adjusts PC (Program Counter) in the thread context as accurately as [Detours](https://github.com/microsoft/Detours).
+
 ### mhook
 
-[mhook](https://github.com/martona/mhook) is a well-known Windows API hooking library like [Detours](https://github.com/microsoft/Detours), it updates threads automatically when set (or unset) hooks, the caller doesn't need to be concerned about this problem, see [mhook/mhook-lib/mhook.cpp at e58a58ca · martona/mhook](https://github.com/martona/mhook/blob/e58a58ca31dbe14f202b9b26315bff9f7a32598c/mhook-lib/mhook.cpp#L557) for implementation.
+[mhook](https://github.com/martona/mhook) updates threads automatically when set (or unset) hooks, the caller doesn't need to be concerned about this problem, see [mhook/mhook-lib/mhook.cpp at e58a58ca · martona/mhook](https://github.com/martona/mhook/blob/e58a58ca31dbe14f202b9b26315bff9f7a32598c/mhook-lib/mhook.cpp#L557) for implementation.
 
-But the way it updates threads is a bit hacky compared to the [Detours](https://github.com/microsoft/Detours) mentioned above, wait 100ms if the thread is exactly in the area where the instruction is about to be modified, try up to 3 times:
+But the way it updates threads is a bit hacky compared to the others mentioned above, wait 100ms if the thread is exactly in the area where the instruction is about to be modified, try up to 3 times:
 ```C
 while (GetThreadContext(hThread, &ctx))
 {

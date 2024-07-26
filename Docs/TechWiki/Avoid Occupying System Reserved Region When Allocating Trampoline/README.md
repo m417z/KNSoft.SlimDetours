@@ -28,7 +28,7 @@ static PVOID    s_pSystemRegionUpperBound   = (PVOID)(ULONG_PTR)0x80000000;
 ```
 [jdu2600](https://github.com/jdu2600) is also aware of this issue and has opened an unofficial PR [microsoft/Detours PR #307](https://github.com/microsoft/Detours/pull/307) for [Detours](https://github.com/microsoft/Detours) wants to update this range to adapt the latest Windows.
 
-[mhook](https://github.com/martona/mhook) is a well-known Windows API hooking library like [Detours](https://github.com/microsoft/Detours), it's a pity that it doesn't seem to take this issue into account.
+[MinHook](https://github.com/TsudaKageyu/minhook) and [mhook](https://github.com/martona/mhook) are both well-known Windows API hooking libraries, but unfortunately they don't seem to take this issue into account.
 
 ## SlimDetours implementation
 
