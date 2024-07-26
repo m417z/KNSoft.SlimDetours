@@ -53,6 +53,8 @@ NTSTATUS NTAPI SlimDetoursDetach(
     _Inout_ PVOID* ppPointer,
     _In_ PVOID pDetour);
 
+#if (NTDDI_VERSION >= NTDDI_WIN6)
+
 /// <summary>
 /// Delay hook, set hooks automatically when target DLL loaded.
 /// </summary>
@@ -75,6 +77,8 @@ NTSTATUS NTAPI SlimDetoursDelayAttach(
     _In_ PCSTR Function,
     _In_opt_ __callback DETOUR_DELAY_ATTACH_CALLBACK Callback,
     _In_opt_ PVOID Context);
+
+#endif /* (NTDDI_VERSION >= NTDDI_WIN6) */
 
 PVOID
 NTAPI
@@ -126,6 +130,8 @@ SlimDetoursDetach(
     return SlimDetoursDetach(reinterpret_cast<void**>(ppPointer), reinterpret_cast<void*>(pDetour));
 }
 
+#if (NTDDI_VERSION >= NTDDI_WIN6)
+
 template<typename T, typename std::enable_if<SlimDetoursIsFunctionPointer<T>::value, int>::type = 0>
 NTSTATUS
 SlimDetoursDelayAttach(
@@ -143,6 +149,8 @@ SlimDetoursDelayAttach(
                                   Callback,
                                   Context);
 }
+
+#endif /* (NTDDI_VERSION >= NTDDI_WIN6) */
 
 #endif // __cplusplus >= 201103L || _MSVC_LANG >= 201103L
 

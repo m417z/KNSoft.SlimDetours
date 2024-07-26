@@ -536,6 +536,8 @@ fail:
     return STATUS_SUCCESS;
 }
 
+#if (NTDDI_VERSION >= NTDDI_WIN6)
+
 static
 NTSTATUS
 NTAPI
@@ -750,3 +752,5 @@ _Exit:
     RtlReleaseSRWLockExclusive(&g_DelayedAttachesLock);
     return Status;
 }
+
+#endif /* (NTDDI_VERSION >= NTDDI_WIN6) */
