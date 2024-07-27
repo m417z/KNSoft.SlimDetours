@@ -117,8 +117,8 @@ detour_gen_jmp_immediate(
 {
     PBYTE pbJmpSrc = pbCode + 5;
     *pbCode++ = 0xe9;   // jmp +imm32
-    *((INT32*)pbCode)++ = (INT32)(pbJmpVal - pbJmpSrc);
-    return pbCode;
+    *((INT32*)pbCode) = (INT32)(pbJmpVal - pbJmpSrc);
+    return pbCode + sizeof(INT32);
 }
 
 _Ret_notnull_
@@ -133,11 +133,11 @@ detour_gen_jmp_indirect(
     *pbCode++ = 0xff;   // jmp [+imm32]
     *pbCode++ = 0x25;
 #if defined(_AMD64_)
-    *((INT32*)pbCode)++ = (INT32)((PBYTE)ppbJmpVal - pbJmpSrc);
+    *((INT32*)pbCode) = (INT32)((PBYTE)ppbJmpVal - pbJmpSrc);
 #else
-    *((INT32*)pbCode)++ = (INT32)((PBYTE)ppbJmpVal);
+    *((INT32*)pbCode) = (INT32)((PBYTE)ppbJmpVal);
 #endif
-    return pbCode;
+    return pbCode + sizeof(INT32);
 }
 
 _Ret_notnull_

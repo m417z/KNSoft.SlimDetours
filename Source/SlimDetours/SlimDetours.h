@@ -27,7 +27,7 @@ extern "C" {
 #define DETOUR_INSTRUCTION_TARGET_NONE ((PVOID)0)
 #define DETOUR_INSTRUCTION_TARGET_DYNAMIC ((PVOID)(LONG_PTR)-1)
 
-#pragma region APIs
+/* APIs */
 
 HRESULT
 NTAPI
@@ -107,9 +107,7 @@ SlimDetoursCopyInstruction(
 }
 #endif
 
-#pragma endregion
-
-#pragma region Type - safe overloads for C++
+/* Type - safe overloads for C++ */
 
 #if __cplusplus >= 201103L || _MSVC_LANG >= 201103L
 #include <type_traits>
@@ -165,5 +163,3 @@ SlimDetoursDelayAttach(
 #endif /* (NTDDI_VERSION >= NTDDI_WIN6) */
 
 #endif // __cplusplus >= 201103L || _MSVC_LANG >= 201103L
-
-#pragma endregion

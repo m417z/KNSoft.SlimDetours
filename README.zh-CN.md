@@ -87,11 +87,11 @@ SlimDetoursDelayAttach((PVOID*)&g_pfnFuncXxx,
 
 ## 兼容性
 
-项目构建：仅考虑对最新MSVC生成工具及SDK的支持，但一般也能较广泛地向下兼容。
+项目构建：主要考虑对最新MSVC生成工具及SDK的支持，同时一般也能较广泛地向下兼容。兼容GCC并可随[ReactOS](https://github.com/reactos/reactos)一同构建。
 
-制品集成：能较广泛地向下兼容MSVC生成工具（已知支持VS2015），以及不同编译配置（如`/MD`、`/MT`）。
+制品集成：广泛地兼容MSVC生成工具（已知支持VS2015），以及不同编译配置（如`/MD`、`/MT`）。
 
-运行环境：NT6及以上操作系统，x86/x64/ARM64平台。
+运行环境：NT5及以上操作系统，x86/x64/ARM64平台。
 
 > [!CAUTION]
 > 处于beta阶段，应小心使用。

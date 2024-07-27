@@ -159,27 +159,27 @@ typedef struct _COPYENTRY
     COPYFUNC    pfCopy;             // Function pointer.
 } COPYENTRY, *PCOPYENTRY;
 
-PBYTE CopyBytes(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
-PBYTE CopyBytesPrefix(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
-PBYTE CopyBytesSegment(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
-PBYTE CopyBytesRax(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
-PBYTE CopyBytesJump(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
-PBYTE Invalid(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
-PBYTE Copy0F(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
-PBYTE Copy0F78(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
-PBYTE Copy0F00(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
-PBYTE Copy0FB8(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
-PBYTE Copy66(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
-PBYTE Copy67(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
-PBYTE CopyF2(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
-PBYTE CopyF3(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
-PBYTE CopyF6(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
-PBYTE CopyF7(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
-PBYTE CopyFF(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
-PBYTE CopyVex3(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
-PBYTE CopyVex2(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
-PBYTE CopyEvex(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
-PBYTE CopyXop(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
+static PBYTE CopyBytes(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
+static PBYTE CopyBytesPrefix(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
+static PBYTE CopyBytesSegment(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
+static PBYTE CopyBytesRax(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
+static PBYTE CopyBytesJump(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
+static PBYTE Invalid(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
+static PBYTE Copy0F(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
+static PBYTE Copy0F78(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
+static PBYTE Copy0F00(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
+static PBYTE Copy0FB8(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
+static PBYTE Copy66(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
+static PBYTE Copy67(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
+static PBYTE CopyF2(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
+static PBYTE CopyF3(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
+static PBYTE CopyF6(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
+static PBYTE CopyF7(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
+static PBYTE CopyFF(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
+static PBYTE CopyVex3(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
+static PBYTE CopyVex2(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
+static PBYTE CopyEvex(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
+static PBYTE CopyXop(_In_ PDETOUR_DISASM pDisasm, _In_opt_ REFCOPYENTRY pEntry, _In_ PBYTE pbDst, _In_ PBYTE pbSrc);
 
 ///////////////////////////////////////////////////////// Disassembler Tables.
 //
@@ -954,10 +954,10 @@ static const BYTE g_rceCopyTable0F[] =
     /* FF */ eENTRY_Invalid,                        // _FF
 };
 
-_STATIC_ASSERT(ARRAYSIZE(g_rbModRm) == 256 &&
-               ARRAYSIZE(g_rceCopyMap) == eENTRY_Invalid + 1 &&
-               ARRAYSIZE(g_rceCopyTable) == 256 &&
-               ARRAYSIZE(g_rceCopyTable0F) == 256);
+_STATIC_ASSERT(_countof(g_rbModRm) == 256 &&
+               _countof(g_rceCopyMap) == eENTRY_Invalid + 1 &&
+               _countof(g_rceCopyTable) == 256 &&
+               _countof(g_rceCopyTable0F) == 256);
 
 /////////////////////////////////////////////////////////// Disassembler Code.
 //

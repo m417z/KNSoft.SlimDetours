@@ -85,9 +85,13 @@ SlimDetoursTransactionBegin(VOID)
     return HRESULT_FROM_NT(STATUS_SUCCESS);
 
 fail:
+#ifdef _MSC_VER
 #pragma warning(disable: __WARNING_INTERLOCKED_ACCESS)
+#endif
     s_nPendingThreadId = 0;
+#ifdef _MSC_VER
 #pragma warning(default: __WARNING_INTERLOCKED_ACCESS)
+#endif
     return HRESULT_FROM_NT(Status);
 }
 

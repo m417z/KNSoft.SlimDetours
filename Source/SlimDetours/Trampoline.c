@@ -291,7 +291,7 @@ detour_alloc_trampoline(
     PDETOUR_TRAMPOLINE pLo;
     PDETOUR_TRAMPOLINE pHi;
 
-    detour_find_jmp_bounds(pbTarget, &pLo, &pHi);
+    detour_find_jmp_bounds(pbTarget, (PVOID*)&pLo, (PVOID*)&pHi);
 
     PDETOUR_TRAMPOLINE pTrampoline = NULL;
 

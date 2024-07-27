@@ -87,11 +87,11 @@ Demo: [DelayHook.c](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Sourc
 
 ## Compatibility
 
-Project building: only support for the latest MSVC generation tools and SDKs is considered, but it is generally more widely backward compatible.
+Project building: support for the latest MSVC generation tools and SDKs is mainly considered, and it is generally more widely backward compatible. GCC compatible and can be built with [ReactOS](https://github.com/reactos/reactos).
 
-Artifact integration: it is widely backward compatible with MSVC generation tools (support for VS2015 is known), and different compilation configurations (e.g., `/MD`, `/MT`).
+Artifact integration: widely compatible with MSVC generation tools (support for VS2015 is known), and different compilation configurations (e.g., `/MD`, `/MT`).
 
-Runtime environment: NT6 or above OS, x86/x64/ARM64 platform.
+Runtime environment: NT5 or above OS, x86/x64/ARM64 platform.
 
 > [!CAUTION]
 > In beta stage, should be used with caution.

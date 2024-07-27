@@ -1,6 +1,31 @@
 ﻿#pragma once
 
+#ifndef __REACTOS__
+
+/* Use KNSoft.NDK by default */
 #include <KNSoft/NDK/NDK.h>
+
+#else
+
+/* Use ReactOS NDK with addendum on ReactOS */
+
+#include "SlimDetours.NDK.Addendum.inl"
+
+#define WIN32_NO_STATUS
+#include <windef.h>
+#include <winbase.h>
+
+#define NTOS_MODE_USER
+#include <ndk/exfuncs.h>
+#include <ndk/obfuncs.h>
+#include <ndk/mmfuncs.h>
+#include <ndk/kefuncs.h>
+#include <ndk/psfuncs.h>
+#include <ndk/rtlfuncs.h>
+
+#include <suppress.h>
+
+#endif
 
 #include "SlimDetours.h"
 
