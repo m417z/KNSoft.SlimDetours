@@ -44,7 +44,7 @@ ASLR only reserves a range of 640MB in size for 32-bit systems, which can be dir
 
 `Ntdll.dll` is randomly loaded by ASLR to a memory address lower in the reserved range, and when the subsequent DLL layout bottoms out, it will wrap to the top of the reserved range and continue to be arranged, in which case the "1GB range after `Ntdll.dll`" is 2 discontinuous regions.
 
-[SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours)' implementation details and circumvention range are different from the above PR, furthermore, it no longer considers the obsolete NT5, and calls `NtQuerySystemInformation` to obtain a more accurate user address space range than hardcoded to help constrain the location of trampolines, see [KNSoft.SlimDetours/Source/SlimDetours/Memory.c at main · KNSoft/KNSoft.SlimDetours](../../../Source/SlimDetours/Memory.c).
+[SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours)' implementation details and circumvention range are different from the above PR, furthermore, NT5 and NT6+ are considered separately, and calls `NtQuerySystemInformation` to obtain a more accurate user address space range than hardcoded to help constrain the location of trampolines, see [KNSoft.SlimDetours/Source/SlimDetours/Memory.c at main · KNSoft/KNSoft.SlimDetours](../../../Source/SlimDetours/Memory.c).
 
 <br>
 <hr>

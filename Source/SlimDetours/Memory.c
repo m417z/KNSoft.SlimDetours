@@ -69,20 +69,28 @@ detour_memory_init(VOID)
 
     /* Initialize memory management information */
     NtQuerySystemInformation(SystemBasicInformation, &g_sbi, sizeof(g_sbi), NULL);
-#if defined(_WIN64)
-    PLDR_DATA_TABLE_ENTRY NtdllLdrEntry;
-
-    NtdllLdrEntry = CONTAINING_RECORD(NtCurrentPeb()->Ldr->InInitializationOrderModuleList.Flink,
-                                      LDR_DATA_TABLE_ENTRY,
-                                      InInitializationOrderModuleList);
-    s_ulSystemRegionLowUpperBound = (ULONG_PTR)NtdllLdrEntry->DllBase + NtdllLdrEntry->SizeOfImage - 1;
-    s_ulSystemRegionLowLowerBound = s_ulSystemRegionLowUpperBound - _1GB + 1;
-    if (s_ulSystemRegionLowLowerBound < SYSTEM_RESERVED_REGION_LOWEST)
+    if (NtCurrentPeb()->OSMajorVersion >= 6)
     {
-        s_ulSystemRegionHighLowerBound = s_ulSystemRegionLowLowerBound + SYSTEM_RESERVED_REGION_SIZE;
-        s_ulSystemRegionLowLowerBound = SYSTEM_RESERVED_REGION_LOWEST;
-    }
+#if defined(_WIN64)
+        PLDR_DATA_TABLE_ENTRY NtdllLdrEntry;
+
+        NtdllLdrEntry = CONTAINING_RECORD(NtCurrentPeb()->Ldr->InInitializationOrderModuleList.Flink,
+                                          LDR_DATA_TABLE_ENTRY,
+                                          InInitializationOrderModuleList);
+        s_ulSystemRegionLowUpperBound = (ULONG_PTR)NtdllLdrEntry->DllBase + NtdllLdrEntry->SizeOfImage - 1;
+        s_ulSystemRegionLowLowerBound = s_ulSystemRegionLowUpperBound - _1GB + 1;
+        if (s_ulSystemRegionLowLowerBound < SYSTEM_RESERVED_REGION_LOWEST)
+        {
+            s_ulSystemRegionHighLowerBound = s_ulSystemRegionLowLowerBound + SYSTEM_RESERVED_REGION_SIZE;
+            s_ulSystemRegionLowLowerBound = SYSTEM_RESERVED_REGION_LOWEST;
+        }
 #endif
+    } else
+    {
+        /* TODO: What if NT5 x64? Let's keep the original Detours behavior. */
+        s_ulSystemRegionLowUpperBound = 0x80000000;
+        s_ulSystemRegionLowLowerBound = 0x70000000;
+    }
 
     /* Initialize private heap */
     hHeap = RtlCreateHeap(HEAP_NO_SERIALIZE | HEAP_GROWABLE, NULL, 0, 0, NULL, NULL);
