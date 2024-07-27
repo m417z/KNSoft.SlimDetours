@@ -12,13 +12,15 @@
 
 #pragma once
 
-#if !defined(_M_IX86) && !defined(_M_X64) && !defined(_M_ARM64)
-#error Unknown architecture (x86, amd64, arm64)
+#if !defined(_X86_) && !defined(_AMD64_) && !defined(_ARM64_)
+#error Unsupported architecture (x86, amd64, arm64)
 #endif
 
 #include <Windows.h>
 
-EXTERN_C_START
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* Instruction Target Macros */
 
@@ -101,7 +103,9 @@ SlimDetoursCopyInstruction(
     _Out_opt_ PVOID* ppTarget,
     _Out_opt_ LONG* plExtra);
 
-EXTERN_C_END
+#ifdef __cplusplus
+}
+#endif
 
 #pragma endregion
 

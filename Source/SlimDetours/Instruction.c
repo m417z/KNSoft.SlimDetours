@@ -107,7 +107,7 @@ detour_is_imported(
     return TRUE;
 }
 
-#if defined(_M_IX86) || defined(_M_X64)
+#if defined(_X86_) || defined(_AMD64_)
 
 _Ret_notnull_
 PBYTE
@@ -127,12 +127,12 @@ detour_gen_jmp_indirect(
     _In_ PBYTE pbCode,
     _In_ PBYTE* ppbJmpVal)
 {
-#if defined(_M_X64)
+#if defined(_AMD64_)
     PBYTE pbJmpSrc = pbCode + 6;
 #endif
     *pbCode++ = 0xff;   // jmp [+imm32]
     *pbCode++ = 0x25;
-#if defined(_M_X64)
+#if defined(_AMD64_)
     *((INT32*)pbCode)++ = (INT32)((PBYTE)ppbJmpVal - pbJmpSrc);
 #else
     *((INT32*)pbCode)++ = (INT32)((PBYTE)ppbJmpVal);
@@ -162,7 +162,7 @@ detour_skip_jmp(
     if (pbCode[0] == 0xff && pbCode[1] == 0x25)
     {
         // Looks like an import alias jump, then get the code it points to.
-#if defined(_M_IX86)
+#if defined(_X86_)
         // jmp [imm32]
         PBYTE pbTarget = *(UNALIGNED PBYTE*) & pbCode[2];
 #else
@@ -190,7 +190,7 @@ detour_skip_jmp(
         if (pbCode[0] == 0xff && pbCode[1] == 0x25)
         {
             // Looks like an import alias jump, then get the code it points to.
-#if defined(_M_IX86)
+#if defined(_X86_)
             // jmp [imm32]
             PBYTE pbTarget = *(UNALIGNED PBYTE*) & pbCode[2];
 #else
@@ -242,7 +242,7 @@ detour_find_jmp_bounds(
         }
         DETOUR_TRACE("[%p..%p..%p] +imm32\n", lo, pbCode, hi);
     }
-#if defined(_M_X64)
+#if defined(_AMD64_)
     // And, within +/- 2GB of relative jmp vectors.
     else if (pbCode[0] == 0xff && pbCode[1] == 0x25)
     {
@@ -364,9 +364,9 @@ detour_is_code_filler(
     return 0;
 }
 
-#endif // defined(_M_IX86) || defined(_M_X64)
+#endif // defined(_X86_) || defined(_AMD64_)
 
-#if defined(_M_ARM64)
+#if defined(_ARM64_)
 inline
 ULONG
 fetch_opcode(
@@ -659,7 +659,7 @@ detour_is_code_filler(
     return 0;
 }
 
-#endif // defined(_M_ARM64)
+#endif // defined(_ARM64_)
 
 PVOID
 NTAPI

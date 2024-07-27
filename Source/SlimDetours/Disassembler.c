@@ -79,7 +79,7 @@
 //
 //  Includes full support for all x86 chips prior to the Pentium III, and some newer stuff.
 //
-#if defined(_M_X64) || defined(_M_IX86)
+#if defined(_AMD64_) || defined(_X86_)
 
 typedef struct _DETOUR_DISASM
 {
@@ -259,7 +259,7 @@ enum
 static const COPYENTRY g_rceCopyMap[] =
 {
     /* eENTRY_CopyBytes1 */            { 1, 1, 0, 0, 0, CopyBytes },
-#if defined(_M_X64)
+#if defined(_AMD64_)
     /* eENTRY_CopyBytes1Address */     { 9, 5, 0, 0, ADDRESS, CopyBytes },
 #else
     /* eENTRY_CopyBytes1Address */     { 5, 3, 0, 0, ADDRESS, CopyBytes },
@@ -273,7 +273,7 @@ static const COPYENTRY g_rceCopyMap[] =
     /* eENTRY_CopyBytes3Dynamic */     { 3, 3, 0, 0, DYNAMIC, CopyBytes },
     /* eENTRY_CopyBytes3Or5 */         { 5, 3, 0, 0, 0, CopyBytes },
     /* eENTRY_CopyBytes3Or5Dynamic */  { 5, 3, 0, 0, DYNAMIC, CopyBytes }, // x86 only
-#if defined(_M_X64)
+#if defined(_AMD64_)
     /* eENTRY_CopyBytes3Or5Rax */      { 5, 3, 0, 0, RAX, CopyBytes },
     /* eENTRY_CopyBytes3Or5Target */   { 5, 5, 0, 1, 0, CopyBytes },
 #else
@@ -322,7 +322,7 @@ static const BYTE g_rceCopyTable[] =
     /* 03 */ eENTRY_CopyBytes2Mod,                  // ADD /r
     /* 04 */ eENTRY_CopyBytes2,                     // ADD ib
     /* 05 */ eENTRY_CopyBytes3Or5,                  // ADD iw
-#if defined(_M_X64)
+#if defined(_AMD64_)
     /* 06 */ eENTRY_Invalid,                        // Invalid
     /* 07 */ eENTRY_Invalid,                        // Invalid
 #else
@@ -335,7 +335,7 @@ static const BYTE g_rceCopyTable[] =
     /* 0B */ eENTRY_CopyBytes2Mod,                  // OR /r
     /* 0C */ eENTRY_CopyBytes2,                     // OR ib
     /* 0D */ eENTRY_CopyBytes3Or5,                  // OR iw
-#if defined(_M_X64)
+#if defined(_AMD64_)
     /* 0E */ eENTRY_Invalid,                        // Invalid
 #else
     /* 0E */ eENTRY_CopyBytes1,                     // PUSH
@@ -347,7 +347,7 @@ static const BYTE g_rceCopyTable[] =
     /* 13 */ eENTRY_CopyBytes2Mod,                  // ADC /r
     /* 14 */ eENTRY_CopyBytes2,                     // ADC ib
     /* 15 */ eENTRY_CopyBytes3Or5,                  // ADC id
-#if defined(_M_X64)
+#if defined(_AMD64_)
     /* 16 */ eENTRY_Invalid,                        // Invalid
     /* 17 */ eENTRY_Invalid,                        // Invalid
 #else
@@ -360,7 +360,7 @@ static const BYTE g_rceCopyTable[] =
     /* 1B */ eENTRY_CopyBytes2Mod,                  // SBB /r
     /* 1C */ eENTRY_CopyBytes2,                     // SBB ib
     /* 1D */ eENTRY_CopyBytes3Or5,                  // SBB id
-#if defined(_M_X64)
+#if defined(_AMD64_)
     /* 1E */ eENTRY_Invalid,                        // Invalid
     /* 1F */ eENTRY_Invalid,                        // Invalid
 #else
@@ -374,7 +374,7 @@ static const BYTE g_rceCopyTable[] =
     /* 24 */ eENTRY_CopyBytes2,                     // AND ib
     /* 25 */ eENTRY_CopyBytes3Or5,                  // AND id
     /* 26 */ eENTRY_CopyBytesSegment,               // ES prefix
-#if defined(_M_X64)
+#if defined(_AMD64_)
     /* 27 */ eENTRY_Invalid,                        // Invalid
 #else
     /* 27 */ eENTRY_CopyBytes1,                     // DAA
@@ -386,7 +386,7 @@ static const BYTE g_rceCopyTable[] =
     /* 2C */ eENTRY_CopyBytes2,                     // SUB ib
     /* 2D */ eENTRY_CopyBytes3Or5,                  // SUB id
     /* 2E */ eENTRY_CopyBytesSegment,               // CS prefix
-#if defined(_M_X64)
+#if defined(_AMD64_)
     /* 2F */ eENTRY_Invalid,                        // Invalid
 #else
     /* 2F */ eENTRY_CopyBytes1,                     // DAS
@@ -398,7 +398,7 @@ static const BYTE g_rceCopyTable[] =
     /* 34 */ eENTRY_CopyBytes2,                     // XOR ib
     /* 35 */ eENTRY_CopyBytes3Or5,                  // XOR id
     /* 36 */ eENTRY_CopyBytesSegment,               // SS prefix
-#if defined(_M_X64)
+#if defined(_AMD64_)
     /* 37 */ eENTRY_Invalid,                        // Invalid
 #else
     /* 37 */ eENTRY_CopyBytes1,                     // AAA
@@ -410,12 +410,12 @@ static const BYTE g_rceCopyTable[] =
     /* 3C */ eENTRY_CopyBytes2,                     // CMP ib
     /* 3D */ eENTRY_CopyBytes3Or5,                  // CMP id
     /* 3E */ eENTRY_CopyBytesSegment,               // DS prefix
-#if defined(_M_X64)
+#if defined(_AMD64_)
     /* 3F */ eENTRY_Invalid,                        // Invalid
 #else
     /* 3F */ eENTRY_CopyBytes1,                     // AAS
 #endif
-#if defined(_M_X64) // For Rax Prefix
+#if defined(_AMD64_) // For Rax Prefix
     /* 40 */ eENTRY_CopyBytesRax,                   // Rax
     /* 41 */ eENTRY_CopyBytesRax,                   // Rax
     /* 42 */ eENTRY_CopyBytesRax,                   // Rax
@@ -466,7 +466,7 @@ static const BYTE g_rceCopyTable[] =
     /* 5D */ eENTRY_CopyBytes1,                     // POP
     /* 5E */ eENTRY_CopyBytes1,                     // POP
     /* 5F */ eENTRY_CopyBytes1,                     // POP
-#if defined(_M_X64)
+#if defined(_AMD64_)
     /* 60 */ eENTRY_Invalid,                        // Invalid
     /* 61 */ eENTRY_Invalid,                        // Invalid
     /* 62 */ eENTRY_CopyEvex,                       // EVEX / AVX512
@@ -506,7 +506,7 @@ static const BYTE g_rceCopyTable[] =
     /* 7F */ eENTRY_CopyBytes2Jump,                 // JG/JNLE      // 0f8f
     /* 80 */ eENTRY_CopyBytes2Mod1,                 // ADD/0 OR/1 ADC/2 SBB/3 AND/4 SUB/5 XOR/6 CMP/7 byte reg, immediate byte
     /* 81 */ eENTRY_CopyBytes2ModOperand,           // ADD/0 OR/1 ADC/2 SBB/3 AND/4 SUB/5 XOR/6 CMP/7 byte reg, immediate word or dword
-#if defined(_M_X64)
+#if defined(_AMD64_)
     /* 82 */ eENTRY_Invalid,                        // Invalid
 #else
     /* 82 */ eENTRY_CopyBytes2Mod1,                 // MOV al,x
@@ -534,7 +534,7 @@ static const BYTE g_rceCopyTable[] =
     /* 97 */ eENTRY_CopyBytes1,                     // XCHG
     /* 98 */ eENTRY_CopyBytes1,                     // CWDE
     /* 99 */ eENTRY_CopyBytes1,                     // CDQ
-#if defined(_M_X64)
+#if defined(_AMD64_)
     /* 9A */ eENTRY_Invalid,                        // Invalid
 #else
     /* 9A */ eENTRY_CopyBytes5Or7Dynamic,           // CALL cp
@@ -590,7 +590,7 @@ static const BYTE g_rceCopyTable[] =
     /* CB */ eENTRY_CopyBytes1Dynamic,              // RET
     /* CC */ eENTRY_CopyBytes1Dynamic,              // INT 3
     /* CD */ eENTRY_CopyBytes2Dynamic,              // INT ib
-#if defined(_M_X64)
+#if defined(_AMD64_)
     /* CE */ eENTRY_Invalid,                        // Invalid
 #else
     /* CE */ eENTRY_CopyBytes1Dynamic,              // INTO
@@ -600,7 +600,7 @@ static const BYTE g_rceCopyTable[] =
     /* D1 */ eENTRY_CopyBytes2Mod,                  // RCL/2, etc.
     /* D2 */ eENTRY_CopyBytes2Mod,                  // RCL/2, etc.
     /* D3 */ eENTRY_CopyBytes2Mod,                  // RCL/2, etc.
-#if defined(_M_X64)
+#if defined(_AMD64_)
     /* D4 */ eENTRY_Invalid,                        // Invalid
     /* D5 */ eENTRY_Invalid,                        // Invalid
 #else
@@ -627,7 +627,7 @@ static const BYTE g_rceCopyTable[] =
     /* E7 */ eENTRY_CopyBytes2,                     // OUT ib
     /* E8 */ eENTRY_CopyBytes3Or5Target,            // CALL cd
     /* E9 */ eENTRY_CopyBytes3Or5Target,            // JMP cd
-#if defined(_M_X64)
+#if defined(_AMD64_)
     /* EA */ eENTRY_Invalid,                        // Invalid
 #else
     /* EA */ eENTRY_CopyBytes5Or7Dynamic,           // JMP cp
@@ -662,7 +662,7 @@ static const BYTE g_rceCopyTable[] =
 
 static const BYTE g_rceCopyTable0F[] =
 {
-#if defined(_M_IX86)
+#if defined(_X86_)
     /* 00 */ eENTRY_Copy0F00,                       // sldt/0 str/1 lldt/2 ltr/3 err/4 verw/5 jmpe/6/dynamic invalid/7
 #else
     /* 00 */ eENTRY_CopyBytes2Mod,                  // sldt/0 str/1 lldt/2 ltr/3 err/4 verw/5 jmpe/6/dynamic invalid/7
@@ -702,13 +702,13 @@ static const BYTE g_rceCopyTable0F[] =
     /* 21 */ eENTRY_CopyBytes2Mod,                  // MOV/r
     /* 22 */ eENTRY_CopyBytes2Mod,                  // MOV/r
     /* 23 */ eENTRY_CopyBytes2Mod,                  // MOV/r
-#if defined(_M_X64)
+#if defined(_AMD64_)
     /* 24 */ eENTRY_Invalid,                        // _24
 #else
     /* 24 */ eENTRY_CopyBytes2Mod,                  // MOV/r,TR TR is test register on 80386 and 80486, removed in Pentium
 #endif
     /* 25 */ eENTRY_Invalid,                        // _25
-#if defined(_M_X64)
+#if defined(_AMD64_)
     /* 26 */ eENTRY_Invalid,                        // _26
 #else
     /* 26 */ eENTRY_CopyBytes2Mod,                  // MOV TR/r TR is test register on 80386 and 80486, removed in Pentium
@@ -876,7 +876,7 @@ static const BYTE g_rceCopyTable0F[] =
     /* B5 */ eENTRY_CopyBytes2Mod,                  // LGS/r
     /* B6 */ eENTRY_CopyBytes2Mod,                  // MOVZX/r
     /* B7 */ eENTRY_CopyBytes2Mod,                  // MOVZX/r
-#if defined(_M_IX86)
+#if defined(_X86_)
     /* B8 */ eENTRY_Copy0FB8,                       // jmpe f3/popcnt
 #else
     /* B8 */ eENTRY_CopyBytes2Mod,                  // f3/popcnt
@@ -988,7 +988,7 @@ AdjustTarget(
         case 4:
             nOldOffset = *(UNALIGNED LONG*)pvTargetAddr;
             break;
-#if defined(_M_X64)
+#if defined(_AMD64_)
         case 8:
             nOldOffset = *(UNALIGNED LONGLONG*)pvTargetAddr;
             break;
@@ -1025,13 +1025,13 @@ AdjustTarget(
                 *pDisasm->plExtra = sizeof(ULONG) - 4;
             }
             break;
-#if defined(_M_X64)
+#if defined(_AMD64_)
         case 8:
             *(UNALIGNED LONGLONG*)pvTargetAddr = nNewOffset;
             break;
 #endif
     }
-#if defined(_M_X64)
+#if defined(_AMD64_)
     // When we are only computing size, source and dest can be
     // far apart, distance not encodable in 32bits. Ok.
     // At least still check the lower 32bits.
@@ -1108,7 +1108,7 @@ CopyBytes(
     {
         nBytesFixed = pDisasm->bAddressOverride ? nFixedSize16 : nFixedSize;
     }
-#if defined(_M_X64)
+#if defined(_AMD64_)
     // REX.W trumps 66
     else if (pDisasm->bRaxOverride)
     {
@@ -1150,7 +1150,7 @@ CopyBytes(
             }
             cbTarget = nBytes - nRelOffset;
         }
-#if defined(_M_X64)
+#if defined(_AMD64_)
         else if (bFlags & RIP)
         {
             nRelOffset = nModOffset + 1;
@@ -1163,7 +1163,7 @@ CopyBytes(
     if (nRelOffset)
     {
         *pDisasm->ppbTarget = AdjustTarget(pDisasm, pbDst, pbSrc, nBytes, nRelOffset, cbTarget);
-#if defined(_M_X64)
+#if defined(_AMD64_)
         if (pEntry->nRelOffset == 0)
         {
             // This is a data target, not a code target, so we shouldn't return it.
@@ -1498,14 +1498,14 @@ CopyFF(
     if (0x15 == b1 || 0x25 == b1)
     {
         // CALL [], JMP []
-#if defined(_M_X64)
+#if defined(_AMD64_)
         // All segments but FS and GS are equivalent.
         if (pDisasm->nSegmentOverride != 0x64 && pDisasm->nSegmentOverride != 0x65)
 #else
         if (pDisasm->nSegmentOverride == 0 || pDisasm->nSegmentOverride == 0x2E)
 #endif
         {
-#if defined(_M_X64)
+#if defined(_AMD64_)
             INT32 offset = *(UNALIGNED INT32*) & pbSrc[2];
             PBYTE* ppbTarget = (PBYTE*)(pbSrc + 6 + offset);
 #else
@@ -1597,7 +1597,7 @@ CopyVex3(
 {
     UNREFERENCED_PARAMETER(pEntry);
 
-#if defined(_M_IX86)
+#if defined(_X86_)
     if ((pbSrc[1] & 0xC0) != 0xC0)
     {
         REFCOPYENTRY ce = &g_rceCopyMap[eENTRY_CopyBytes2Mod]; /* C4 ceLES */
@@ -1607,7 +1607,7 @@ CopyVex3(
     pbDst[0] = pbSrc[0];
     pbDst[1] = pbSrc[1];
     pbDst[2] = pbSrc[2];
-#if defined(_M_X64)
+#if defined(_AMD64_)
     pDisasm->bRaxOverride |= !!(pbSrc[2] & 0x80); // w in last byte, see CopyBytesRax
 #else
     //
@@ -1648,7 +1648,7 @@ CopyVex2(
     _In_ PBYTE pbSrc)
 // 2 byte VEX prefix 0xC5
 {
-#if defined(_M_IX86)
+#if defined(_X86_)
     if ((pbSrc[1] & 0xC0) != 0xC0)
     {
         REFCOPYENTRY ce = &g_rceCopyMap[eENTRY_CopyBytes2Mod]; /* C5 ceLDS */
@@ -1675,7 +1675,7 @@ CopyEvex(
 
     BYTE const p0 = pbSrc[1];
 
-#if defined(_M_IX86)
+#if defined(_X86_)
     if ((p0 & 0xC0) != 0xC0)
     {
         return CopyBytes(pDisasm, &g_rceCopyMap[eENTRY_CopyBytes2Mod], pbDst, pbSrc); /* 62 ceBound */
@@ -1697,7 +1697,7 @@ CopyEvex(
 
     pDisasm->bEvex = TRUE;
 
-#if defined(_M_X64)
+#if defined(_AMD64_)
     pDisasm->bRaxOverride |= !!(p1 & 0x80); // w
 #endif
 
@@ -1741,9 +1741,9 @@ pp is like VEX but only instructions with 0 are defined
     }
 }
 
-#endif // defined(_M_X64) || defined(_M_IX86)
+#endif // defined(_AMD64_) || defined(_X86_)
 
-#if defined(_M_ARM64)
+#if defined(_ARM64_)
 
 typedef struct _DETOUR_DISASM
 {
@@ -2683,7 +2683,7 @@ CopyInstruction(
     return pSrc + 4;
 }
 
-#endif // defined(_M_ARM64)
+#endif // defined(_ARM64_)
 
 PVOID
 NTAPI
@@ -2695,10 +2695,10 @@ SlimDetoursCopyInstruction(
 {
     DETOUR_DISASM Disasm;
 
-#if defined(_M_X64) || defined(_M_IX86)
+#if defined(_AMD64_) || defined(_X86_)
     detour_disasm_init(&Disasm, (PBYTE*)ppTarget, plExtra);
     return (PVOID)CopyInstruction(&Disasm, (PBYTE)pDst, (PBYTE)pSrc);
-#elif defined(_M_ARM64)
+#elif defined(_ARM64_)
     detour_disasm_init(&Disasm);
     return (PVOID)CopyInstruction(&Disasm,
                                   (PBYTE)pDst,

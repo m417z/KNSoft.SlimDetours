@@ -72,7 +72,7 @@ return SlimDetoursTransactionCommit();
 
 ### 延迟挂钩
 
-“延迟挂钩”将在目标DLL加载时自动挂钩。
+“延迟挂钩”将在目标DLL加载时自动挂钩，在NT6+上支持。
 
 比如，调用`SlimDetoursDelayAttach`来在`a.dll`加载时自动挂勾`a.dll!FuncXxx`：
 ```C
@@ -89,7 +89,7 @@ SlimDetoursDelayAttach((PVOID*)&g_pfnFuncXxx,
 
 项目构建：仅考虑对最新MSVC生成工具及SDK的支持，但一般也能较广泛地向下兼容。
 
-制品集成：能较广泛地向下兼容MSVC生成工具，以及不同编译配置（如`/MD`、`/MT`）。
+制品集成：能较广泛地向下兼容MSVC生成工具（已知支持VS2015），以及不同编译配置（如`/MD`、`/MT`）。
 
 运行环境：NT6及以上操作系统，x86/x64/ARM64平台。
 

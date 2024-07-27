@@ -1,6 +1,7 @@
 .vs
 *.user
 
+/Compatibility
 /packages
 /OutDir
 IntDir

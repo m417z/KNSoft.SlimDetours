@@ -180,13 +180,13 @@ SlimDetoursTransactionCommit(VOID)
                          o->pbTarget[4], o->pbTarget[5], o->pbTarget[6], o->pbTarget[7],
                          o->pbTarget[8], o->pbTarget[9], o->pbTarget[10], o->pbTarget[11]);
 
-#if defined(_M_X64)
+#if defined(_AMD64_)
             pbCode = detour_gen_jmp_indirect(o->pTrampoline->rbCodeIn, &o->pTrampoline->pbDetour);
             NtFlushInstructionCache(NtCurrentProcess(), pbCode, pbCode - o->pTrampoline->rbCodeIn);
             pbCode = detour_gen_jmp_immediate(o->pbTarget, o->pTrampoline->rbCodeIn);
-#elif defined(_M_IX86)
+#elif defined(_X86_)
             pbCode = detour_gen_jmp_immediate(o->pbTarget, o->pTrampoline->pbDetour);
-#elif defined(_M_ARM64)
+#elif defined(_ARM64_)
             pbCode = detour_gen_jmp_indirect(o->pbTarget, (ULONG64*)&(o->pTrampoline->pbDetour));
 #endif
             pbCode = detour_gen_brk(pbCode, o->pTrampoline->pbRemain);
@@ -415,11 +415,11 @@ fail:
     pTrampoline->pbDetour = (PBYTE)pDetour;
 
     pbTrampoline = pTrampoline->rbCode + pTrampoline->cbCode;
-#if defined(_M_X64)
+#if defined(_AMD64_)
     pbTrampoline = detour_gen_jmp_indirect(pbTrampoline, &pTrampoline->pbRemain);
-#elif defined(_M_IX86)
+#elif defined(_X86_)
     pbTrampoline = detour_gen_jmp_immediate(pbTrampoline, pTrampoline->pbRemain);
-#elif defined(_M_ARM64)
+#elif defined(_ARM64_)
     pbTrampoline = detour_gen_jmp_immediate(pbTrampoline, &pbPool, pTrampoline->pbRemain);
 #endif
     pbTrampoline = detour_gen_brk(pbTrampoline, pbPool);

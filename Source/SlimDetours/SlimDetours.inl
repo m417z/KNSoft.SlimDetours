@@ -58,43 +58,43 @@ typedef struct _DETOUR_TRAMPOLINE
     //
     // The number is rounded up to 128. m_rbScratchDst should match this.
     //
-#if defined(_M_IX86) || defined(_M_X64)
+#if defined(_X86_) || defined(_AMD64_)
     BYTE            rbCode[30];         // target code + jmp to pbRemain.
-#elif defined(_M_ARM64)
+#elif defined(_ARM64_)
     BYTE            rbCode[128];        // target code + jmp to pbRemain.
 #endif
     BYTE            cbCode;             // size of moved target code.
-#if defined(_M_IX86) || defined(_M_X64)
+#if defined(_X86_) || defined(_AMD64_)
     BYTE            cbCodeBreak;        // padding to make debugging easier.
-#elif defined(_M_ARM64)
+#elif defined(_ARM64_)
     BYTE            cbCodeBreak[3];     // padding to make debugging easier.
 #endif
-#if defined(_M_IX86)
+#if defined(_X86_)
     BYTE            rbRestore[22];      // original target code.
-#elif defined(_M_X64)
+#elif defined(_AMD64_)
     BYTE            rbRestore[30];      // original target code.
-#elif defined(_M_ARM64)
+#elif defined(_ARM64_)
     BYTE            rbRestore[24];      // original target code.
 #endif
     BYTE            cbRestore;          // size of original target code.
-#if defined(_M_IX86) || defined(_M_X64)
+#if defined(_X86_) || defined(_AMD64_)
     BYTE            cbRestoreBreak;     // padding to make debugging easier.
-#elif defined(_M_ARM64)
+#elif defined(_ARM64_)
     BYTE            cbRestoreBreak[3];  // padding to make debugging easier.
 #endif
     DETOUR_ALIGN    rAlign[8];          // instruction alignment array.
     PBYTE           pbRemain;           // first instruction after moved code. [free list]
     PBYTE           pbDetour;           // first instruction of detour function.
-#if defined(_M_X64)
+#if defined(_AMD64_)
     BYTE            rbCodeIn[8];        // jmp [pbDetour]
 #endif
 } DETOUR_TRAMPOLINE, *PDETOUR_TRAMPOLINE;
 
-#if defined(_M_IX86)
+#if defined(_X86_)
 _STATIC_ASSERT(sizeof(DETOUR_TRAMPOLINE) == 72);
-#elif defined(_M_X64)
+#elif defined(_AMD64_)
 _STATIC_ASSERT(sizeof(DETOUR_TRAMPOLINE) == 96);
-#elif defined(_M_ARM64)
+#elif defined(_ARM64_)
 _STATIC_ASSERT(sizeof(DETOUR_TRAMPOLINE) == 184);
 #endif
 
@@ -141,14 +141,14 @@ detour_memory_2gb_above(
 
 enum
 {
-#if defined(_M_IX86) || defined(_M_X64)
+#if defined(_X86_) || defined(_AMD64_)
     SIZE_OF_JMP = 5
-#elif defined(_M_ARM64)
+#elif defined(_ARM64_)
     SIZE_OF_JMP = 12
 #endif
 };
 
-#if defined(_M_IX86) || defined(_M_X64)
+#if defined(_X86_) || defined(_AMD64_)
 
 _Ret_notnull_
 PBYTE
@@ -162,7 +162,7 @@ detour_gen_jmp_indirect(
     _In_ PBYTE pbCode,
     _In_ PBYTE* ppbJmpVal);
 
-#elif defined(_M_ARM64)
+#elif defined(_ARM64_)
 
 _Ret_notnull_
 PBYTE
