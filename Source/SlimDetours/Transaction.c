@@ -12,6 +12,8 @@
 
 #include "SlimDetours.inl"
 
+#if (NTDDI_VERSION >= NTDDI_WIN6)
+
 typedef
 NTSTATUS
 NTAPI
@@ -34,10 +36,14 @@ struct _DETOUR_DELAY_ATTACH
     PVOID Context;
 };
 
+#endif /* (NTDDI_VERSION >= NTDDI_WIN6) */
+
 static HANDLE s_nPendingThreadId = 0; // Thread owning pending transaction.
 static PHANDLE s_phSuspendedThreads = NULL;
 static ULONG s_ulSuspendedThreadCount = 0;
 static PDETOUR_OPERATION s_pPendingOperations = NULL;
+
+#if (NTDDI_VERSION >= NTDDI_WIN6)
 
 static const ANSI_STRING g_asLdrRegisterDllNotification = RTL_CONSTANT_STRING("LdrRegisterDllNotification");
 static FN_LdrRegisterDllNotification* g_pfnLdrRegisterDllNotification = NULL;
@@ -46,6 +52,8 @@ static RTL_RUN_ONCE g_stInitDelayAttach = RTL_RUN_ONCE_INIT;
 static RTL_SRWLOCK g_DelayedAttachesLock = RTL_SRWLOCK_INIT;
 static PVOID g_DllNotifyCookie = NULL;
 static PDETOUR_DELAY_ATTACH g_DelayedAttaches = NULL;
+
+#endif /* (NTDDI_VERSION >= NTDDI_WIN6) */
 
 HRESULT
 NTAPI
