@@ -100,7 +100,7 @@ Runtime environment: NT6 or above OS, x86/x64/ARM64 platform.
 
 [![GitHub License](https://img.shields.io/github/license/KNSoft/KNSoft.SlimDetours)](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/LICENSE)
 
-KNSoft.SlimDetours is licensed under the [MPL-2.0](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/LICENSE) license.
+KNSoft.SlimDetours is licensed under the [MIT](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/LICENSE) license.
 
 Source is based on [Microsoft Detours](https://github.com/microsoft/Detours) which is licensed under the [MIT](https://github.com/microsoft/Detours/blob/main/LICENSE) license.
 

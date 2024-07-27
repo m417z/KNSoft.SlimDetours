@@ -7,8 +7,8 @@
     <authors>KNSoft</authors>
     <projectUrl>https://github.com/KNSoft/KNSoft.SlimDetours</projectUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
-    <license type="expression">MPL-2.0</license>
-    <licenseUrl>https://licenses.nuget.org/MPL-2.0</licenseUrl>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
     <readme>README.md</readme>
     <description>KNSoft.SlimDetours is an improved Windows API hooking library base on Microsoft Detours.</description>
     <tags>native Windows Detours Hook Utility Runtime</tags>

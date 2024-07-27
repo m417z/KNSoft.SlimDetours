@@ -100,7 +100,7 @@ SlimDetoursDelayAttach((PVOID*)&g_pfnFuncXxx,
 
 [![GitHub License](https://img.shields.io/github/license/KNSoft/KNSoft.SlimDetours)](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/LICENSE)
 
-KNSoft.SlimDetours根据[MPL-2.0](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/LICENSE)协议进行许可。
+KNSoft.SlimDetours根据[MIT](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/LICENSE)协议进行许可。
 
 源码基于[Microsoft Detours](https://github.com/microsoft/Detours)，其根据[MIT](https://github.com/microsoft/Detours/blob/main/LICENSE)协议进行许可。
 

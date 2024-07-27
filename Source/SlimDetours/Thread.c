@@ -1,7 +1,7 @@
 ﻿/*
  * KNSoft SlimDetours (https://github.com/KNSoft/SlimDetours) Thread management
  * Copyright (c) KNSoft.org (https://github.com/KNSoft). All rights reserved.
- * Licensed under the MPL-2.0 license.
+ * Licensed under the MIT license.
  */
 
 #include "SlimDetours.inl"
