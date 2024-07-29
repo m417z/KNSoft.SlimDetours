@@ -27,6 +27,9 @@
     <ClCompile Include="SlimDetours\Transaction.c">
       <Filter>SlimDetours</Filter>
     </ClCompile>
+    <ClCompile Include="SlimDetours\Wrapper.c">
+      <Filter>SlimDetours</Filter>
+    </ClCompile>
     <ClCompile Include="Detours\src\creatwth.cpp">
       <Filter>Detours</Filter>
     </ClCompile>

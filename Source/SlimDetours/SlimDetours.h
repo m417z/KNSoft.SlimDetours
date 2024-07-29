@@ -27,7 +27,7 @@ extern "C" {
 #define DETOUR_INSTRUCTION_TARGET_NONE ((PVOID)0)
 #define DETOUR_INSTRUCTION_TARGET_DYNAMIC ((PVOID)(LONG_PTR)-1)
 
-/* APIs */
+/* API from Detours */
 
 HRESULT
 NTAPI
@@ -52,6 +52,66 @@ NTAPI
 SlimDetoursDetach(
     _Inout_ PVOID* ppPointer,
     _In_ PVOID pDetour);
+
+PVOID
+NTAPI
+SlimDetoursCodeFromPointer(
+    _In_ PVOID pPointer);
+
+PVOID
+NTAPI
+SlimDetoursCopyInstruction(
+    _In_opt_ PVOID pDst,
+    _In_ PVOID pSrc,
+    _Out_opt_ PVOID* ppTarget,
+    _Out_opt_ LONG* plExtra);
+
+/* Wrapper API by SlimDetours */
+
+HRESULT
+NTAPI
+SlimDetoursEnableHook(
+    _In_ BOOL Enable,
+    _Inout_ PVOID* ppPointer,
+    _In_ PVOID pDetour);
+
+HRESULT
+NTAPI
+SlimDetoursSetHook(
+    _Inout_ PVOID* ppPointer,
+    _In_ PVOID pDetour);
+
+HRESULT
+NTAPI
+SlimDetoursUnsetHook(
+    _Inout_ PVOID* ppPointer,
+    _In_ PVOID pDetour);
+
+HRESULT
+NTAPI
+SlimDetoursEnableHooksV(
+    _In_ BOOL Enable,
+    _In_ ULONG Count,
+    _In_ va_list ArgPtr);
+
+HRESULT
+WINAPIV
+SlimDetoursEnableHooks(
+    _In_ BOOL Enable,
+    _In_ ULONG Count,
+    ...);
+
+HRESULT
+WINAPIV
+SlimDetoursSetHooks(
+    _In_ ULONG Count,
+    ...);
+
+HRESULT
+WINAPIV
+SlimDetoursUnsetHooks(
+    _In_ ULONG Count,
+    ...);
 
 #if (NTDDI_VERSION >= NTDDI_WIN6)
 
@@ -90,76 +150,6 @@ SlimDetoursDelayAttach(
 
 #endif /* (NTDDI_VERSION >= NTDDI_WIN6) */
 
-PVOID
-NTAPI
-SlimDetoursCodeFromPointer(
-    _In_ PVOID pPointer);
-
-PVOID
-NTAPI
-SlimDetoursCopyInstruction(
-    _In_opt_ PVOID pDst,
-    _In_ PVOID pSrc,
-    _Out_opt_ PVOID* ppTarget,
-    _Out_opt_ LONG* plExtra);
-
 #ifdef __cplusplus
 }
 #endif
-
-/* Type - safe overloads for C++ */
-
-#if __cplusplus >= 201103L || _MSVC_LANG >= 201103L
-#include <type_traits>
-
-template<typename T>
-struct SlimDetoursIsFunctionPointer : std::false_type
-{
-};
-
-template<typename T>
-struct SlimDetoursIsFunctionPointer<T*> : std::is_function<typename std::remove_pointer<T>::type>
-{
-};
-
-template<typename T, typename std::enable_if<SlimDetoursIsFunctionPointer<T>::value, int>::type = 0>
-HRESULT
-SlimDetoursAttach(
-    _Inout_ T* ppPointer,
-    _In_ T pDetour) noexcept
-{
-    return SlimDetoursAttach(reinterpret_cast<void**>(ppPointer), reinterpret_cast<void*>(pDetour));
-}
-
-template<typename T, typename std::enable_if<SlimDetoursIsFunctionPointer<T>::value, int>::type = 0>
-HRESULT
-SlimDetoursDetach(
-    _Inout_ T* ppPointer,
-    _In_ T pDetour) noexcept
-{
-    return SlimDetoursDetach(reinterpret_cast<void**>(ppPointer), reinterpret_cast<void*>(pDetour));
-}
-
-#if (NTDDI_VERSION >= NTDDI_WIN6)
-
-template<typename T, typename std::enable_if<SlimDetoursIsFunctionPointer<T>::value, int>::type = 0>
-HRESULT
-SlimDetoursDelayAttach(
-    _In_ T* ppPointer,
-    _In_ T pDetour,
-    _In_ PCWSTR DllName,
-    _In_ PCSTR Function,
-    _In_opt_ __callback DETOUR_DELAY_ATTACH_CALLBACK Callback,
-    _In_opt_ PVOID Context)
-{
-    return SlimDetoursDelayAttach(reinterpret_cast<void**>(ppPointer),
-                                  reinterpret_cast<void*>(pDetour),
-                                  DllName,
-                                  Function,
-                                  Callback,
-                                  Context);
-}
-
-#endif /* (NTDDI_VERSION >= NTDDI_WIN6) */
-
-#endif // __cplusplus >= 201103L || _MSVC_LANG >= 201103L

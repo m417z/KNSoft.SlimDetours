@@ -69,6 +69,10 @@ if (FAILED(hr))
 }
 return SlimDetoursTransactionCommit();
 ```
+如果觉得如上Detours风格的API调用复杂，[SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours)在[Wrapper.c](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/SlimDetours/Wrapper.c)中提供了一些API，仅需一行即可完成工作，如：
+```C
+SlimDetoursSetHook((PVOID*)&g_pfnXxx, Hooked_Xxx);
+```
 
 ### 延迟挂钩
 

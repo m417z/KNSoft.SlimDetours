@@ -69,6 +69,10 @@ if (FAILED(hr))
 }
 return SlimDetoursTransactionCommit();
 ```
+If you feel the above Detours-style API calls complicated, [SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours) provides some APIs in [Wrapper.c](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/SlimDetours/Wrapper.c), which can do the job with just one line, such as:
+```C
+SlimDetoursSetHook((PVOID*)&g_pfnXxx, Hooked_Xxx);
+```
 
 ### Delay Hook
 
