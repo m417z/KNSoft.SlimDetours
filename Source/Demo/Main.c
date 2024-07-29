@@ -68,7 +68,7 @@ Hooked_EqualRect(
     BOOL Ret;
 
     InterlockedIncrement(&g_lEqualRectCount);
-    UnitTest_FormatMessage("Hooked EqualRect enter: lprc1 = (%d, %d, %d, %d), lprc2 = (%d, %d, %d, %d)\n",
+    UnitTest_FormatMessage("Hooked EqualRect enter: lprc1 = (%ld, %ld, %ld, %ld), lprc2 = (%ld, %ld, %ld, %ld)\n",
                            lprc1->top,
                            lprc1->right,
                            lprc1->bottom,

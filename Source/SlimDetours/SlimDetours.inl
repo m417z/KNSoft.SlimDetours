@@ -9,8 +9,6 @@
 
 /* Use ReactOS NDK with addendum on ReactOS */
 
-#include "SlimDetours.NDK.Addendum.inl"
-
 #define WIN32_NO_STATUS
 #include <windef.h>
 #include <winbase.h>
@@ -24,6 +22,8 @@
 #include <ndk/rtlfuncs.h>
 
 #include <suppress.h>
+
+#include "SlimDetours.NDK.Addendum.inl"
 
 #endif
 

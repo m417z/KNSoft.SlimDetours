@@ -36,15 +36,6 @@ struct _DETOUR_DELAY_ATTACH
     PVOID Context;
 };
 
-#endif /* (NTDDI_VERSION >= NTDDI_WIN6) */
-
-static HANDLE s_nPendingThreadId = 0; // Thread owning pending transaction.
-static PHANDLE s_phSuspendedThreads = NULL;
-static ULONG s_ulSuspendedThreadCount = 0;
-static PDETOUR_OPERATION s_pPendingOperations = NULL;
-
-#if (NTDDI_VERSION >= NTDDI_WIN6)
-
 static const ANSI_STRING g_asLdrRegisterDllNotification = RTL_CONSTANT_STRING("LdrRegisterDllNotification");
 static FN_LdrRegisterDllNotification* g_pfnLdrRegisterDllNotification = NULL;
 static NTSTATUS g_lDelayAttachStatus = STATUS_UNSUCCESSFUL;
@@ -54,6 +45,11 @@ static PVOID g_DllNotifyCookie = NULL;
 static PDETOUR_DELAY_ATTACH g_DelayedAttaches = NULL;
 
 #endif /* (NTDDI_VERSION >= NTDDI_WIN6) */
+
+static HANDLE s_nPendingThreadId = 0; // Thread owning pending transaction.
+static PHANDLE s_phSuspendedThreads = NULL;
+static ULONG s_ulSuspendedThreadCount = 0;
+static PDETOUR_OPERATION s_pPendingOperations = NULL;
 
 HRESULT
 NTAPI
@@ -696,9 +692,13 @@ SlimDetoursDelayAttach(
     PDETOUR_DELAY_ATTACH NewNode;
 
     /* Don't need try/except */
+#ifdef _MSC_VER
 #pragma warning(disable: __WARNING_PROBE_NO_TRY)
+#endif
     Status = RtlRunOnceExecuteOnce(&g_stInitDelayAttach, detour_init_delay_attach, NULL, NULL);
+#ifdef _MSC_VER
 #pragma warning(default: __WARNING_PROBE_NO_TRY)
+#endif
     if (!NT_SUCCESS(Status))
     {
         return HRESULT_FROM_NT(Status);
