@@ -9,7 +9,7 @@
 
 Inline hook has to modify the instructions at the beginning of the function to implement the jump, in order to cope with the possibility that a thread is running on the instruction to be modified, it's necessary to update the thread in this state to avoid executing an illegal combination of old and new instructions.
 
-## Implementations on other hooking library
+## Implementations on other hooking libraries
 
 ### Detours
 
@@ -30,7 +30,7 @@ But [Detours](https://github.com/microsoft/Detours) updates threads very precise
 
 ### mhook
 
-[mhook](https://github.com/martona/mhook) updates threads automatically when set (or unset) hooks, the caller doesn't need to be concerned about this problem, see [mhook/mhook-lib/mhook.cpp at e58a58ca · martona/mhook](https://github.com/martona/mhook/blob/e58a58ca31dbe14f202b9b26315bff9f7a32598c/mhook-lib/mhook.cpp#L557) for implementation.
+[mhook](https://github.com/martona/mhook) updates threads automatically when set (or unset) hooks, see [mhook/mhook-lib/mhook.cpp at e58a58ca · martona/mhook](https://github.com/martona/mhook/blob/e58a58ca31dbe14f202b9b26315bff9f7a32598c/mhook-lib/mhook.cpp#L557) for implementation.
 
 But the way it updates threads is a bit hacky compared to the others mentioned above, wait 100ms if the thread is exactly in the area where the instruction is about to be modified, try up to 3 times:
 ```C

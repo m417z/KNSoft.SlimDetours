@@ -23,10 +23,10 @@ Compared to the original [Detours](https://github.com/microsoft/Detours), the ad
 - Lite
   - **Depends on `Ntdll.dll` only**
   - Retain API hooking functions only
-  - Remove support for ARM (ARM32), IA64, WinXP, GNUC
+  - Remove support for ARM (ARM32), IA64
   - Smaller binary size
-- Out-of-the-box
-  - NuGet package is released
+
+And here is a [Todo List](https://github.com/KNSoft/KNSoft.SlimDetours/milestones?with_issues=no).
 
 ## Usage
 
@@ -50,7 +50,15 @@ If your project configuration name is neither "Release" nor "Debug", [MSBuild sh
 #pragma comment(lib, "Debug/KNSoft.SlimDetours.lib")
 ```
 
-Usage is similiar to the original [Microsoft Detours](https://github.com/microsoft/Detours), but:
+The usage has been simplified, e.g. the hook only needs one line:
+```C
+SlimDetoursSetHook((PVOID*)&g_pfnXxx, Hooked_Xxx);
+```
+For more simplified API see [Wrapper.c](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/SlimDetours/Wrapper.c).
+
+### Details
+
+The original [Microsoft Detours](https://github.com/microsoft/Detours) style functions are also retained, but with a few differences:
 
 - Function name begin with `"SlimDetours"`
 - Most of return values are [`HRESULT`](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-erref/0642cb2f-2075-4469-918c-4441e69c548a) that wraps [`NTSTATUS`](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-erref/87fba13e-bf06-450e-83b1-9241dc81e781) by [`HRESULT_FROM_NT`](https://learn.microsoft.com/en-us/windows/win32/api/winerror/nf-winerror-hresult_from_nt) macro, use macros like [`SUCCEEDED`](https://learn.microsoft.com/en-us/windows/win32/api/winerror/nf-winerror-succeeded) to check them.
@@ -68,10 +76,6 @@ if (FAILED(hr))
     return hr;
 }
 return SlimDetoursTransactionCommit();
-```
-If you feel the above Detours-style API calls complicated, [SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours) provides some APIs in [Wrapper.c](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/SlimDetours/Wrapper.c), which can do the job with just one line, such as:
-```C
-SlimDetoursSetHook((PVOID*)&g_pfnXxx, Hooked_Xxx);
 ```
 
 ### Delay Hook
@@ -91,11 +95,11 @@ Demo: [DelayHook.c](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Sourc
 
 ## Compatibility
 
-Project building: support for the latest MSVC generation tools and SDKs is mainly considered, and it is generally more widely backward compatible. GCC compatible and can be built with [ReactOS](https://github.com/reactos/reactos).
+Project building: support for the latest MSVC generation tools and SDKs is mainly considered. The code in this project is backwards compatible with the MSVC generation tool and GCC, but it depends on the NDK it depends on, see also [SlimDetours.NDK.inl](./Source/SlimDetours/SlimDetours.NDK.inl). Can be built with [ReactOS](https://github.com/reactos/reactos).
 
 Artifact integration: widely compatible with MSVC generation tools (support for VS2015 is known), and different compilation configurations (e.g., `/MD`, `/MT`).
 
-Runtime environment: NT5 or above OS, x86/x64/ARM64 platform.
+Runtime environment: NT5 or above OS, x86/x64/ARM64 platforms.
 
 > [!CAUTION]
 > In beta stage, should be used with caution.

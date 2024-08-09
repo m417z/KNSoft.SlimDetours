@@ -23,10 +23,10 @@
 - 轻量
   - **仅依赖`Ntdll.dll`**
   - 仅保留API挂钩函数
-  - 移除对ARM (ARM32)、IA64、WinXP、GNUC的支持
+  - 移除对ARM (ARM32)、IA64的支持
   - 更小的二进制体积
-- 开箱即用
-  - NuGet包发布
+
+  以及此处的[待办列表](https://github.com/KNSoft/KNSoft.SlimDetours/milestones?with_issues=no)。
 
 ## 用法
 
@@ -50,7 +50,15 @@ NuGet包[KNSoft.SlimDetours](https://www.nuget.org/packages/KNSoft.SlimDetours)�
 #pragma comment(lib, "Debug/KNSoft.SlimDetours.lib")
 ```
 
-用法与原版[Microsoft Detours](https://github.com/microsoft/Detours)相似，除了：
+用法已进行了简化，例如挂钩仅需一行：
+```C
+SlimDetoursSetHook((PVOID*)&g_pfnXxx, Hooked_Xxx);
+```
+更多简化的API参考[Wrapper.c](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/SlimDetours/Wrapper.c)。
+
+### 详细说明
+
+原版[Microsoft Detours](https://github.com/microsoft/Detours)风格的函数也有保留，但有少许不同：
 
 - 函数名以`"SlimDetours"`开头
 - 大多数返回值是用[`HRESULT_FROM_NT`](https://learn.microsoft.com/en-us/windows/win32/api/winerror/nf-winerror-hresult_from_nt)宏包装[`NTSTATUS`](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-erref/87fba13e-bf06-450e-83b1-9241dc81e781)而来的[`HRESULT`](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-erref/0642cb2f-2075-4469-918c-4441e69c548a)，使用类似[`SUCCEEDED`](https://learn.microsoft.com/en-us/windows/win32/api/winerror/nf-winerror-succeeded) 的宏检查它们。
@@ -68,10 +76,6 @@ if (FAILED(hr))
     return hr;
 }
 return SlimDetoursTransactionCommit();
-```
-如果觉得如上Detours风格的API调用复杂，[SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours)在[Wrapper.c](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/SlimDetours/Wrapper.c)中提供了一些API，仅需一行即可完成工作，如：
-```C
-SlimDetoursSetHook((PVOID*)&g_pfnXxx, Hooked_Xxx);
 ```
 
 ### 延迟挂钩
@@ -91,7 +95,7 @@ SlimDetoursDelayAttach((PVOID*)&g_pfnFuncXxx,
 
 ## 兼容性
 
-项目构建：主要考虑对最新MSVC生成工具及SDK的支持，同时一般也能较广泛地向下兼容。兼容GCC并可随[ReactOS](https://github.com/reactos/reactos)一同构建。
+项目构建：主要考虑对最新MSVC生成工具和SDK的支持。本项目代码能向下兼容MSVC生成工具与GCC，但具体还要看其依赖的NDK，参考[SlimDetours.NDK.inl](./Source/SlimDetours/SlimDetours.NDK.inl)。支持随[ReactOS](https://github.com/reactos/reactos)一同构建。
 
 制品集成：广泛地兼容MSVC生成工具（已知支持VS2015），以及不同编译配置（如`/MD`、`/MT`）。
 
