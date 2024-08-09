@@ -12,11 +12,11 @@
 
 #pragma once
 
+#include <Windows.h>
+
 #if !defined(_X86_) && !defined(_AMD64_) && !defined(_ARM64_)
 #error Unsupported architecture (x86, amd64, arm64)
 #endif
-
-#include <Windows.h>
 
 #ifdef __cplusplus
 extern "C" {

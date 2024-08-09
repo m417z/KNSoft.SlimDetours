@@ -2,6 +2,15 @@
 
 #include <KNSoft/NDK/UnitTest/UnitTest.inl>
 
+TEST_DECL_FUNC(DeadLock);
+TEST_DECL_FUNC(DelayHook);
+
+CONST UNITTEST_ENTRY UnitTestList[] = {
+    TEST_DECL_ENTRY(DeadLock),
+    TEST_DECL_ENTRY(DelayHook),
+    { 0 }
+};
+
 #define DEMO_SWITCH_ENGINE L"-Engine="
 
 FN_EqualRect* g_pfnEqualRect = NULL;

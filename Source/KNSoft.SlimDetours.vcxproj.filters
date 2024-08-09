@@ -79,6 +79,9 @@
     <None Include="Detours\src\uimports.cpp">
       <Filter>Detours</Filter>
     </None>
+    <None Include="SlimDetours\SlimDetours.NDK.inl">
+      <Filter>SlimDetours</Filter>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
 </Project>

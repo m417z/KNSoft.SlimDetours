@@ -34,6 +34,18 @@
             <PreprocessorDefinitions>MSB_CONFIGURATIONTYPE_UTILITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
         </ClCompile>
     </ItemDefinitionGroup>
+    <ItemDefinitionGroup>
+        <ClCompile>
+            <PreprocessorDefinitions>MSB_CONFIGURATION_NAME="$(ConfigurationName)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>MSB_MSBUILD_VERSION="$(MSBuildVersion)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>MSB_VCTOOLS_VERSION="$(VCToolsVersion)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>MSB_PLATFORM_TOOLSET="$(PlatformToolset)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>MSB_PLATFORM_TOOLSET_VERSION="$(PlatformToolsetVersion)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>MSB_PLATFORM_TARGET_VERSION="$(PlatformTarget)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>MSB_TARGET_PLATFORM_VERSION="$(TargetPlatformVersion)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>MSB_TARGET_PLATFORM_DISPLAY_NAME="$(TargetPlatformDisplayName)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+        </ClCompile>
+    </ItemDefinitionGroup>
 
     <!-- Use static default libraries -->
     <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
@@ -47,9 +59,9 @@
         </ClCompile>
     </ItemDefinitionGroup>
 
-    <!-- Import $(ProjectName).Build.props if exists -->
+    <!-- Import $(MSBuildProjectName).Build.props if exists -->
     <PropertyGroup>
-        <ProjectNameBuildPropsPath>$(MSBuildProjectDirectory)\$(ProjectName).Build.props</ProjectNameBuildPropsPath>
+        <ProjectNameBuildPropsPath>$(MSBuildProjectDirectory)\$(MSBuildProjectName).Build.props</ProjectNameBuildPropsPath>
     </PropertyGroup>
     <Import Project="$(ProjectNameBuildPropsPath)" Condition="Exists('$(ProjectNameBuildPropsPath)')"/>
     

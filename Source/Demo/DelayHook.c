@@ -30,7 +30,7 @@ DelayAttachCallback(
         _stricmp(Function, g_asEqualRect.Buffer) == 0;
 }
 
-static TEST_DECL(DelayHook)
+TEST_FUNC(DelayHook)
 {
     NTSTATUS Status;
     HRESULT hr;

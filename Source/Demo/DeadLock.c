@@ -83,7 +83,7 @@ SetHookThread(
     return hr;
 }
 
-static TEST_DECL(DeadLock)
+TEST_FUNC(DeadLock)
 {
     NTSTATUS Status;
     HANDLE hThreads[2];
