@@ -1,5 +1,5 @@
 ﻿/*
- * KNSoft SlimDetours (https://github.com/KNSoft/SlimDetours) Instruction Utility
+ * KNSoft.SlimDetours (https://github.com/KNSoft/KNSoft.SlimDetours) Instruction Utility
  * Copyright (c) KNSoft.org (https://github.com/KNSoft). All rights reserved.
  * Licensed under the MIT license.
  *

@@ -1,5 +1,5 @@
 ﻿/*
- * KNSoft SlimDetours (https://github.com/KNSoft/SlimDetours) Wrapper API
+ * KNSoft.SlimDetours (https://github.com/KNSoft/KNSoft.SlimDetours) Wrapper API
  * Copyright (c) KNSoft.org (https://github.com/KNSoft). All rights reserved.
  * Licensed under the MIT license.
  */

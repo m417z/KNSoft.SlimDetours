@@ -1,5 +1,5 @@
 ﻿/*
- * KNSoft SlimDetours (https://github.com/KNSoft/SlimDetours) Trampoline management
+ * KNSoft.SlimDetours (https://github.com/KNSoft/KNSoft.SlimDetours) Trampoline management
  * Copyright (c) KNSoft.org (https://github.com/KNSoft). All rights reserved.
  * Licensed under the MIT license.
  *
