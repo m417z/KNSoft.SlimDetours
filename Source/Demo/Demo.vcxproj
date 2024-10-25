@@ -179,6 +179,7 @@
     <ClCompile Include="DeadLock.c" />
     <ClCompile Include="DelayHook.c" />
     <ClCompile Include="Main.c" />
+    <ClCompile Include="TwiceSimpleHook.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Demo.h" />
