@@ -32,7 +32,17 @@
 #include <ndk/kefuncs.h>
 #include <ndk/psfuncs.h>
 #include <ndk/rtlfuncs.h>
+#include <ndk/umfuncs.h>
 
+#endif
+
+/* Backwards compatible */
+#if (NTDDI_VERSION < NTDDI_WIN8)
+typedef ULONG LOGICAL, *PLOGICAL;
+#endif
+
+#ifndef FAST_FAIL_INVALID_ARG
+#define FAST_FAIL_INVALID_ARG 5
 #endif
 
 /* Add KNSoft.NDK specific stuff */
@@ -74,9 +84,15 @@
 
 #endif
 
-#define NtCurrentProcessId() ((HANDLE)ReadTeb(ClientId.UniqueProcess))
-#define NtCurrentThreadId() ((HANDLE)ReadTeb(ClientId.UniqueThread))
+#define NtCurrentProcessId() (NtCurrentTeb()->ClientId.UniqueProcess)
+#define NtCurrentThreadId() (NtCurrentTeb()->ClientId.UniqueThread)
 #define NtGetProcessHeap() (NtCurrentPeb()->ProcessHeap)
 #define NtGetNtdllBase() (CONTAINING_RECORD(NtCurrentPeb()->Ldr->InInitializationOrderModuleList.Flink, LDR_DATA_TABLE_ENTRY, InInitializationOrderLinks)->DllBase)
+
+#if defined(_WIN64)
+#define SIZE_OF_POINTER 8
+#else
+#define SIZE_OF_POINTER 4
+#endif
 
 #endif

@@ -10,6 +10,7 @@ static LONG volatile g_lEqualRect = 0;
 static FN_EqualRect* g_pfnEqualRect1 = NULL;
 static FN_EqualRect* g_pfnEqualRect2 = NULL;
 
+static
 BOOL
 WINAPI
 Hooked_EqualRect1(
@@ -21,6 +22,7 @@ Hooked_EqualRect1(
     return g_pfnEqualRect1(lprc1, lprc2);
 }
 
+static
 BOOL
 WINAPI
 Hooked_EqualRect2(
@@ -46,16 +48,16 @@ TEST_FUNC(TwiceSimpleHook)
     }
 
     g_pfnEqualRect1 = g_pfnEqualRect2 = g_pfnEqualRect;
-    hr = SlimDetoursSetHook((PVOID)&g_pfnEqualRect1, Hooked_EqualRect1);
+    hr = SlimDetoursInlineHook(TRUE, (PVOID)&g_pfnEqualRect1, Hooked_EqualRect1);
     if (FAILED(hr))
     {
-        TEST_SKIP("1st SlimDetoursSetHook failed with 0x%08lX\n", hr);
+        TEST_SKIP("1st SlimDetoursInlineHook failed with 0x%08lX\n", hr);
         return;
     }
-    hr = SlimDetoursSetHook((PVOID)&g_pfnEqualRect2, Hooked_EqualRect2);
+    hr = SlimDetoursInlineHook(TRUE, (PVOID)&g_pfnEqualRect2, Hooked_EqualRect2);
     if (FAILED(hr))
     {
-        TEST_SKIP("2nd SlimDetoursSetHook failed with 0x%08lX\n", hr);
+        TEST_SKIP("2nd SlimDetoursInlineHook failed with 0x%08lX\n", hr);
         return;
     }
 

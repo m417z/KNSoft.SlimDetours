@@ -11,6 +11,7 @@
 static BOOL g_bDelayAttach = FALSE;
 
 static
+_Function_class_(DETOUR_DELAY_ATTACH_CALLBACK_FN)
 VOID
 CALLBACK
 DelayAttachCallback(

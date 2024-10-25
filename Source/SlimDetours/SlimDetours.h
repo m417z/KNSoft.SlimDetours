@@ -22,12 +22,10 @@
 extern "C" {
 #endif
 
-/* Instruction Target Macros */
+/* Improved original Detours API */
 
 #define DETOUR_INSTRUCTION_TARGET_NONE ((PVOID)0)
 #define DETOUR_INSTRUCTION_TARGET_DYNAMIC ((PVOID)(LONG_PTR)-1)
-
-/* API from Detours */
 
 HRESULT
 NTAPI
@@ -66,114 +64,179 @@ SlimDetoursCopyInstruction(
     _Out_opt_ PVOID* ppTarget,
     _Out_opt_ LONG* plExtra);
 
-/* Wrapper API by SlimDetours */
+/* Inline Hook, base on Detours */
 
+/// <summary>
+/// Set or unset a single inline hook
+/// </summary>
+/// <param name="bEnable">Set to TRUE to hook, or FALSE to unhook.</param>
+/// <param name="ppPointer">See also SlimDetoursAttach or SlimDetoursDetach.</param>
+/// <param name="pDetour">See also SlimDetoursAttach or SlimDetoursDetach.</param>
+/// <returns>Returns HRESULT</returns>
+/// <seealso cref="SlimDetoursAttach"/>
+/// <seealso cref="SlimDetoursDetach"/>
 HRESULT
 NTAPI
-SlimDetoursEnableHook(
-    _In_ BOOL Enable,
+SlimDetoursInlineHook(
+    _In_ BOOL bEnable,
     _Inout_ PVOID* ppPointer,
     _In_ PVOID pDetour);
 
+typedef struct _DETOUR_INLINE_HOOK
+{
+    PCSTR pszFuncName;  // Can be an ordinal
+    PVOID* ppPointer;   // Pointer to a variable contains the original function address before hooking,
+                        // and will be replaced with trampoline address after hooking
+    PVOID pDetour;      // Address of detour function
+} DETOUR_INLINE_HOOK, *PDETOUR_INLINE_HOOK;
+
+/// <summary>
+/// Initialize an inline hook array
+/// </summary>
+/// <param name="hModule">Handle to the module exported those functions.</param>
+/// <param name="ppPointer">See also <c>SlimDetoursAttach</c> or <c>SlimDetoursDetach</c>.</param>
+/// <param name="pDetour">See also <c>SlimDetoursAttach</c> or <c>SlimDetoursDetach</c>.</param>
+/// <returns>Return HRESULT</returns>
+/// <remarks>
+/// Get function address by <c>pszFuncName</c> and store in <c>*ppPointer</c>
+/// for each <c>DETOUR_INLINE_HOOK</c> element.
+/// </remarks>
+/// <seealso cref="SlimDetoursAttach"/>
+/// <seealso cref="SlimDetoursDetach"/>
 HRESULT
 NTAPI
-SlimDetoursSetHook(
-    _Inout_ PVOID* ppPointer,
-    _In_ PVOID pDetour);
+SlimDetoursInitInlineHooks(
+    _In_ HMODULE hModule,
+    _In_ ULONG ulCount,
+    _Inout_updates_(ulCount) PDETOUR_INLINE_HOOK pHooks);
 
+/// <summary>
+/// Set or unset multiple inline hooks in a same target module
+/// </summary>
+/// <param name="bEnable">Set to TRUE to hook, or FALSE to unhook.</param>
+/// <param name="ulCount">Number of elements in <c>pHooks</c> array.</param>
+/// <param name="pHooks">A pointer point to an <c>DETOUR_INLINE_HOOK</c> array.</param>
+/// <returns>Return HRESULT</returns>
+/// <remarks>
+/// <c>*ppPointer</c> and <c>pDetour</c> in <c>DETOUR_INLINE_HOOK</c>
+/// should be initialized before calling this function.
+/// </remarks>
+/// <seealso cref="SlimDetoursInitInlineHooks"/>
+/// <seealso cref="SlimDetoursInlineHook"/>
 HRESULT
 NTAPI
-SlimDetoursUnsetHook(
-    _Inout_ PVOID* ppPointer,
-    _In_ PVOID pDetour);
-
-HRESULT
-NTAPI
-SlimDetoursEnableHooksV(
-    _In_ BOOL Enable,
-    _In_ ULONG Count,
-    _In_ va_list ArgPtr);
-
-HRESULT
-WINAPIV
-SlimDetoursEnableHooks(
-    _In_ BOOL Enable,
-    _In_ ULONG Count,
-    ...);
-
-HRESULT
-WINAPIV
-SlimDetoursSetHooks(
-    _In_ ULONG Count,
-    ...);
-
-HRESULT
-WINAPIV
-SlimDetoursUnsetHooks(
-    _In_ ULONG Count,
-    ...);
+SlimDetoursInlineHooks(
+    _In_ BOOL bEnable,
+    _In_ ULONG ulCount,
+    _Inout_updates_(ulCount) PDETOUR_INLINE_HOOK pHooks);
 
 /* Function Table Hook, by SlimDetours */
 
+/// <summary>
+/// Set or unset a single function hook in a function address table.
+/// </summary>
+/// <param name="pFuncTable">Pointer to the target function address table.</param>
+/// <param name="ulOffset">Offset to the target function address in the table.</param>
+/// <param name="ppOldFunc">Optional, pointer to a variable to save the old function address.</param>
+/// <param name="pNewFunc">Address of the new function to overwrite.</param>
+/// <returns>Return HRESULT</returns>
+/// <remarks>
+/// Function address table should be an array that each element is a function address.
+/// SlimDetours overwrite corresponding function address in the table to implement the hooking.
+/// This is useful to do COM/IAT/... hook, and automatically adjust write-protection on the table when writing it.
+/// </remarks>
 HRESULT
 NTAPI
-SlimDetoursSetTableHook(
+SlimDetoursFuncTableHook(
     _In_ PVOID* pFuncTable,
     _In_ ULONG ulOffset,
-    _Out_ PVOID* ppOriginal,
-    _In_ PVOID pDetour);
-
-HRESULT
-NTAPI
-SlimDetoursUnsetTableHook(
-    _In_ PVOID* pFuncTable,
-    _In_ ULONG ulOffset,
-    _In_ PVOID pOriginal);
+    _Out_opt_ PVOID* ppOldFunc,
+    _In_ PVOID pNewFunc);
 
 typedef struct _DETOUR_FUNC_TABLE_HOOK
 {
-    ULONG ulOffset;
-    PVOID* ppOriginal;
-    PVOID pDetour;
+    ULONG ulOffset;     // Offset to the target function address in the table
+    PVOID* ppOldFunc;   // Pointer to a variable contains the old function address
+    PVOID pNewFunc;     // Address of new function
 } DETOUR_FUNC_TABLE_HOOK, *PDETOUR_FUNC_TABLE_HOOK;
 
+/// <summary>
+/// Set or unset multiple function hooks in a same function address table.
+/// </summary>
+/// <param name="bEnable">Set to TRUE to hook, or FALSE to unhook.</param>
+/// <param name="pFuncTable">Pointer to the target function address table.</param>
+/// <param name="ulCount">Number of elements in <c>pHooks</c> array.</param>
+/// <param name="pHooks">A pointer point to an <c>DETOUR_FUNC_TABLE_HOOK</c> array.</param>
+/// <returns>Return HRESULT</returns>
+/// <seealso cref="SlimDetoursFuncTableHook"/>
 HRESULT
 NTAPI
-SlimDetoursEnableTableHooks(
+SlimDetoursFuncTableHooks(
     _In_ BOOL bEnable,
     _In_ PVOID* pFuncTable,
     _In_ ULONG ulCount,
     _Inout_updates_(ulCount) PDETOUR_FUNC_TABLE_HOOK pHooks);
 
+/// <summary>
+/// Set or unset multiple function hooks in a same COM interface.
+/// </summary>
+/// <param name="bEnable">Set to TRUE to hook, or FALSE to unhook.</param>
+/// <param name="rCLSID">See also <c>rclsid</c> parameter of <c>CoCreateInstance</c>.</param>
+/// <param name="rIID">See also <c>riid</c> parameter of <c>CoCreateInstance</c>.</param>
+/// <param name="ulCount">Number of elements in <c>pHooks</c> array.</param>
+/// <param name="pHooks">A pointer point to an <c>DETOUR_FUNC_TABLE_HOOK</c> array.</param>
+/// <returns>Return HRESULT</returns>
+/// <remarks>
+/// COM should be initialized before calling this function,
+/// a wrong COM context (or apartment type) may cause hooks ineffective and even crash.
+/// <c>DETOUR_FUNC_TABLE_HOOK.ulOffset</c> should be the offset to a function address in the vtable of COM object.
+/// e.g. <c>FIELD_OFFSET(IOpenControlPanelVtbl, GetPath)</c>.
+/// </remarks>
+/// <seealso cref="CoInitialize"/>
+/// <seealso cref="CoCreateInstance"/>
+/// <seealso cref="SlimDetoursFuncTableHooks"/>
+HRESULT
+NTAPI
+SlimDetoursCOMHooks(
+    _In_ BOOL bEnable,
+    _In_ REFCLSID rCLSID,
+    _In_ REFCLSID rIID,
+    _In_ ULONG ulCount,
+    _Inout_updates_(ulCount) PDETOUR_FUNC_TABLE_HOOK pHooks);
+
+/// <summary>
+/// Set or unset a singe function hook in a COM interface.
+/// </summary>
+/// <seealso cref="SlimDetoursCOMHooks"/>
 FORCEINLINE
 HRESULT
-SlimDetoursSetTableHooks(
-    _In_ PVOID* pFuncTable,
-    _In_ ULONG ulCount,
-    _Inout_updates_(ulCount) PDETOUR_FUNC_TABLE_HOOK pHooks)
+SlimDetoursCOMHook(
+    _In_ REFCLSID rCLSID,
+    _In_ REFCLSID rIID,
+    _In_ ULONG ulOffset,
+    _Out_opt_ PVOID* ppOldFunc,
+    _In_ PVOID pNewFunc)
 {
-    return SlimDetoursEnableTableHooks(TRUE, pFuncTable, ulCount, pHooks);
+    DETOUR_FUNC_TABLE_HOOK Hook = { ulOffset, ppOldFunc, pNewFunc };
+
+    return SlimDetoursCOMHooks(ppOldFunc != NULL, rCLSID, rIID, 1, &Hook);
 }
 
-FORCEINLINE
-HRESULT
-SlimDetoursUnsetTableHooks(
-    _In_ PVOID* pFuncTable,
-    _In_ ULONG ulCount,
-    _Inout_updates_(ulCount) PDETOUR_FUNC_TABLE_HOOK pHooks)
-{
-    return SlimDetoursEnableTableHooks(FALSE, pFuncTable, ulCount, pHooks);
-}
+/* Delay Hook, by SlimDetours */
 
 #if (NTDDI_VERSION >= NTDDI_WIN6)
 
 typedef
-VOID(CALLBACK* DETOUR_DELAY_ATTACH_CALLBACK)(
+_Function_class_(DETOUR_DELAY_ATTACH_CALLBACK_FN)
+VOID
+CALLBACK
+DETOUR_DELAY_ATTACH_CALLBACK_FN(
     _In_ HRESULT Result,
     _In_ PVOID* ppPointer,
     _In_ PCWSTR DllName,
     _In_ PCSTR Function,
     _In_opt_ PVOID Context);
+typedef DETOUR_DELAY_ATTACH_CALLBACK_FN *PDETOUR_DELAY_ATTACH_CALLBACK_FN;
 
 /// <summary>
 /// Delay hook, set hooks automatically when target DLL loaded.
@@ -197,7 +260,7 @@ SlimDetoursDelayAttach(
     _In_ PVOID pDetour,
     _In_ PCWSTR DllName,
     _In_ PCSTR Function,
-    _In_opt_ __callback DETOUR_DELAY_ATTACH_CALLBACK Callback,
+    _In_opt_ __callback PDETOUR_DELAY_ATTACH_CALLBACK_FN Callback,
     _In_opt_ PVOID Context);
 
 #endif /* (NTDDI_VERSION >= NTDDI_WIN6) */

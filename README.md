@@ -52,9 +52,11 @@ If your project configuration name is neither "Release" nor "Debug", [MSBuild sh
 
 The usage has been simplified, e.g. the hook only needs one line:
 ```C
-SlimDetoursSetHook((PVOID*)&g_pfnXxx, Hooked_Xxx);
+SlimDetoursInlineHook(TRUE, (PVOID*)&g_pfnXxx, Hooked_Xxx);  // Hook
+...
+SlimDetoursInlineHook(FALSE, (PVOID*)&g_pfnXxx, Hooked_Xxx); // Unhook
 ```
-For more simplified API see [Wrapper.c](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/SlimDetours/Wrapper.c).
+For more simplified API see [InlineHook.c](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/SlimDetours/InlineHook.c).
 
 ### Details
 

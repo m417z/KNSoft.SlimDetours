@@ -207,9 +207,10 @@
     <ClCompile Include="SlimDetours\Thread.c" />
     <ClCompile Include="SlimDetours\Trampoline.c" />
     <ClCompile Include="SlimDetours\Transaction.c" />
-    <ClCompile Include="SlimDetours\Wrapper.c" />
+    <ClCompile Include="SlimDetours\InlineHook.c" />
     <None Include="packages.config" />
     <None Include="SlimDetours\SlimDetours.NDK.inl" />
+    <None Include="SlimDetours\Utils.inl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Detours\src\detours.h" />

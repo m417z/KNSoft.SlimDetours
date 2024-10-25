@@ -32,7 +32,7 @@ struct _DETOUR_DELAY_ATTACH
     PCSTR pszFunction;
     PVOID* ppPointer;
     PVOID pDetour;
-    DETOUR_DELAY_ATTACH_CALLBACK pfnCallback;
+    PDETOUR_DELAY_ATTACH_CALLBACK_FN pfnCallback;
     PVOID Context;
 };
 
@@ -46,7 +46,7 @@ static PDETOUR_DELAY_ATTACH g_DelayedAttaches = NULL;
 
 #endif /* (NTDDI_VERSION >= NTDDI_WIN6) */
 
-static HANDLE s_nPendingThreadId = 0; // Thread owning pending transaction.
+static DECLSPEC_ALIGN(SIZE_OF_POINTER) _Interlocked_operand_ HANDLE volatile s_nPendingThreadId = 0; // Thread owning pending transaction.
 static PHANDLE s_phSuspendedThreads = NULL;
 static ULONG s_ulSuspendedThreadCount = 0;
 static PDETOUR_OPERATION s_pPendingOperations = NULL;
@@ -683,7 +683,7 @@ SlimDetoursDelayAttach(
     _In_ PVOID pDetour,
     _In_ PCWSTR DllName,
     _In_ PCSTR Function,
-    _In_opt_ __callback DETOUR_DELAY_ATTACH_CALLBACK Callback,
+    _In_opt_ __callback PDETOUR_DELAY_ATTACH_CALLBACK_FN Callback,
     _In_opt_ PVOID Context)
 {
     NTSTATUS Status;

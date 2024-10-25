@@ -52,9 +52,11 @@ NuGet包[KNSoft.SlimDetours](https://www.nuget.org/packages/KNSoft.SlimDetours)�
 
 用法已进行了简化，例如挂钩仅需一行：
 ```C
-SlimDetoursSetHook((PVOID*)&g_pfnXxx, Hooked_Xxx);
+SlimDetoursInlineHook(TRUE, (PVOID*)&g_pfnXxx, Hooked_Xxx);  // 挂钩
+...
+SlimDetoursInlineHook(FALSE, (PVOID*)&g_pfnXxx, Hooked_Xxx); // 脱钩
 ```
-更多简化的API参考[Wrapper.c](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/SlimDetours/Wrapper.c)。
+更多简化的API参考[InlineHook.c](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/SlimDetours/InlineHook.c)。
 
 ### 详细说明
 

@@ -80,7 +80,7 @@ Hooked_EqualRect(
 {
     BOOL Ret;
 
-    InterlockedIncrement(&g_lEqualRectCount);
+    _InterlockedIncrement(&g_lEqualRectCount);
     UnitTest_FormatMessage("Hooked EqualRect enter: lprc1 = (%ld, %ld, %ld, %ld), lprc2 = (%ld, %ld, %ld, %ld)\n",
                            lprc1->top,
                            lprc1->right,
@@ -90,9 +90,9 @@ Hooked_EqualRect(
                            lprc2->right,
                            lprc2->bottom,
                            lprc2->left);
-    InterlockedIncrement(&g_lEqualRectRefCount);
+    _InterlockedIncrement(&g_lEqualRectRefCount);
     Ret = g_pfnEqualRect(lprc1, lprc2);
-    InterlockedDecrement(&g_lEqualRectRefCount);
+    _InterlockedDecrement(&g_lEqualRectRefCount);
     UnitTest_FormatMessage("Hooked EqualRect leave with return value: %ld\n", Ret);
     return Ret;
 }

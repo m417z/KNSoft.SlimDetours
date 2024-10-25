@@ -59,7 +59,6 @@ TEST_FUNC(COMHook)
     HRESULT hr;
     IOpenControlPanel* pocp1;
     IOpenControlPanel* pocp2;
-    IOpenControlPanel* pocp3;
 
     hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
     if (FAILED(hr))
@@ -68,21 +67,22 @@ TEST_FUNC(COMHook)
         return;
     }
 
+    hr = SlimDetoursCOMHook(&CLSID_OpenControlPanel,
+                            &IID_IOpenControlPanel,
+                            FIELD_OFFSET(IOpenControlPanelVtbl, GetPath),
+                            (PVOID*)&g_pfnIOpenControlPanel_GetPath,
+                            Hooked_IOpenControlPanel_GetPath);
+    if (FAILED(hr))
+    {
+        TEST_SKIP("SlimDetoursCOMHook failed with: 0x%08lX\n", hr);
+        goto _Exit_0;
+    }
+
     hr = CoCreateInstance(&CLSID_OpenControlPanel, NULL, CLSCTX_INPROC_SERVER, &IID_IOpenControlPanel, &pocp1);
     if (FAILED(hr))
     {
         TEST_SKIP("CoCreateInstance failed with: 0x%08lX\n", hr);
         goto _Exit_0;
-    }
-
-    hr = SlimDetoursSetTableHook((PVOID*)pocp1->lpVtbl,
-                                 FIELD_OFFSET(IOpenControlPanelVtbl, GetPath),
-                                 (PVOID*)&g_pfnIOpenControlPanel_GetPath,
-                                 Hooked_IOpenControlPanel_GetPath);
-    if (FAILED(hr))
-    {
-        TEST_SKIP("SlimDetoursSetVTableHook failed with: 0x%08lX\n", hr);
-        goto _Exit_1;
     }
     TEST_OK(Test_IOpenControlPanel_GetPath(pocp1));
 
@@ -94,16 +94,6 @@ TEST_FUNC(COMHook)
     }
     TEST_OK(Test_IOpenControlPanel_GetPath(pocp2));
 
-    hr = CoCreateInstance(&CLSID_OpenControlPanel, NULL, CLSCTX_INPROC_SERVER, &IID_IOpenControlPanel, &pocp3);
-    if (FAILED(hr))
-    {
-        TEST_SKIP("CoCreateInstance failed with: 0x%08lX\n", hr);
-        goto _Exit_2;
-    }
-    TEST_OK(Test_IOpenControlPanel_GetPath(pocp3));
-
-    pocp2->lpVtbl->Release(pocp3);
-_Exit_2:
     pocp2->lpVtbl->Release(pocp2);
 _Exit_1:
     pocp1->lpVtbl->Release(pocp1);

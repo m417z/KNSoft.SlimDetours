@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "SlimDetours.NDK.inl"
+#include "Utils.inl"
 #include "SlimDetours.h"
 
 #include <suppress.h>
