@@ -37,3 +37,4 @@ jobs:
         .\Source\OutDir\${{matrix.platform}}\${{matrix.config}}\Demo.exe -Run DeadLock -Engine=SlimDetours
         .\Source\OutDir\${{matrix.platform}}\${{matrix.config}}\Demo.exe -Run DelayHook
         .\Source\OutDir\${{matrix.platform}}\${{matrix.config}}\Demo.exe -Run TwiceSimpleHook
+        .\Source\OutDir\${{matrix.platform}}\${{matrix.config}}\Demo.exe -Run COMHook

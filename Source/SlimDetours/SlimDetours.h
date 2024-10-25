@@ -113,6 +113,58 @@ SlimDetoursUnsetHooks(
     _In_ ULONG Count,
     ...);
 
+/* Function Table Hook, by SlimDetours */
+
+HRESULT
+NTAPI
+SlimDetoursSetTableHook(
+    _In_ PVOID* pFuncTable,
+    _In_ ULONG ulOffset,
+    _Out_ PVOID* ppOriginal,
+    _In_ PVOID pDetour);
+
+HRESULT
+NTAPI
+SlimDetoursUnsetTableHook(
+    _In_ PVOID* pFuncTable,
+    _In_ ULONG ulOffset,
+    _In_ PVOID pOriginal);
+
+typedef struct _DETOUR_FUNC_TABLE_HOOK
+{
+    ULONG ulOffset;
+    PVOID* ppOriginal;
+    PVOID pDetour;
+} DETOUR_FUNC_TABLE_HOOK, *PDETOUR_FUNC_TABLE_HOOK;
+
+HRESULT
+NTAPI
+SlimDetoursEnableTableHooks(
+    _In_ BOOL bEnable,
+    _In_ PVOID* pFuncTable,
+    _In_ ULONG ulCount,
+    _Inout_updates_(ulCount) PDETOUR_FUNC_TABLE_HOOK pHooks);
+
+FORCEINLINE
+HRESULT
+SlimDetoursSetTableHooks(
+    _In_ PVOID* pFuncTable,
+    _In_ ULONG ulCount,
+    _Inout_updates_(ulCount) PDETOUR_FUNC_TABLE_HOOK pHooks)
+{
+    return SlimDetoursEnableTableHooks(TRUE, pFuncTable, ulCount, pHooks);
+}
+
+FORCEINLINE
+HRESULT
+SlimDetoursUnsetTableHooks(
+    _In_ PVOID* pFuncTable,
+    _In_ ULONG ulCount,
+    _Inout_updates_(ulCount) PDETOUR_FUNC_TABLE_HOOK pHooks)
+{
+    return SlimDetoursEnableTableHooks(FALSE, pFuncTable, ulCount, pHooks);
+}
+
 #if (NTDDI_VERSION >= NTDDI_WIN6)
 
 typedef

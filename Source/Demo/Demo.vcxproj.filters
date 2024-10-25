@@ -5,6 +5,7 @@
     <ClCompile Include="DeadLock.c" />
     <ClCompile Include="DelayHook.c" />
     <ClCompile Include="TwiceSimpleHook.c" />
+    <ClCompile Include="COMHook.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Demo.h" />
