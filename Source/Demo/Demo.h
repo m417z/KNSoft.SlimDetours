@@ -2,6 +2,7 @@
 
 #include <KNSoft/NDK/NDK.h>
 #include <KNSoft/NDK/Package/UnitTest.h>
+#include <KNSoft/NDK/Package/StrSafe.h>
 
 #include "../SlimDetours/SlimDetours.h"
 #include "../Detours/src/detours.h"

@@ -46,7 +46,7 @@ static PDETOUR_DELAY_ATTACH g_DelayedAttaches = NULL;
 
 #endif /* (NTDDI_VERSION >= NTDDI_WIN6) */
 
-static DECLSPEC_ALIGN(SIZE_OF_POINTER) _Interlocked_operand_ HANDLE volatile s_nPendingThreadId = 0; // Thread owning pending transaction.
+static _Interlocked_operand_ LONG volatile s_nPendingThreadId = 0; // Thread owning pending transaction.
 static PHANDLE s_phSuspendedThreads = NULL;
 static ULONG s_ulSuspendedThreadCount = 0;
 static PDETOUR_OPERATION s_pPendingOperations = NULL;
@@ -58,7 +58,7 @@ SlimDetoursTransactionBegin(VOID)
     NTSTATUS Status;
 
     // Make sure only one thread can start a transaction.
-    if (_InterlockedCompareExchangePointer(&s_nPendingThreadId, NtCurrentThreadId(), 0) != 0)
+    if (_InterlockedCompareExchange(&s_nPendingThreadId, (LONG)NtCurrentThreadId(), 0) != 0)
     {
         return HRESULT_FROM_NT(STATUS_TRANSACTIONAL_CONFLICT);
     }
@@ -99,7 +99,7 @@ SlimDetoursTransactionAbort(VOID)
     SIZE_T sMem;
     DWORD dwOld;
 
-    if (s_nPendingThreadId != NtCurrentThreadId())
+    if (s_nPendingThreadId != (LONG)NtCurrentThreadId())
     {
         return HRESULT_FROM_NT(STATUS_TRANSACTIONAL_CONFLICT);
     }
@@ -152,7 +152,7 @@ SlimDetoursTransactionCommit(VOID)
     BOOL freed = FALSE;
     ULONG i;
 
-    if (s_nPendingThreadId != NtCurrentThreadId())
+    if (s_nPendingThreadId != (LONG)NtCurrentThreadId())
     {
         return HRESULT_FROM_NT(STATUS_TRANSACTIONAL_CONFLICT);
     }
@@ -281,7 +281,7 @@ SlimDetoursAttach(
     SIZE_T sMem;
     DWORD dwOld;
 
-    if (s_nPendingThreadId != NtCurrentThreadId())
+    if (s_nPendingThreadId != (LONG)NtCurrentThreadId())
     {
         return HRESULT_FROM_NT(STATUS_TRANSACTIONAL_CONFLICT);
     }
@@ -484,7 +484,7 @@ SlimDetoursDetach(
     SIZE_T sMem;
     DWORD dwOld;
 
-    if (s_nPendingThreadId != NtCurrentThreadId())
+    if (s_nPendingThreadId != (LONG)NtCurrentThreadId())
     {
         return HRESULT_FROM_NT(STATUS_TRANSACTIONAL_CONFLICT);
     }

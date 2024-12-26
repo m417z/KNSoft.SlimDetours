@@ -84,8 +84,8 @@ typedef ULONG LOGICAL, *PLOGICAL;
 
 #endif
 
-#define NtCurrentProcessId() (NtCurrentTeb()->ClientId.UniqueProcess)
-#define NtCurrentThreadId() (NtCurrentTeb()->ClientId.UniqueThread)
+#define NtCurrentProcessId() ((ULONG)(ULONG_PTR)NtCurrentTeb()->ClientId.UniqueProcess)
+#define NtCurrentThreadId() ((ULONG)(ULONG_PTR)NtCurrentTeb()->ClientId.UniqueThread)
 #define NtGetProcessHeap() (NtCurrentPeb()->ProcessHeap)
 #define NtGetNtdllBase() (CONTAINING_RECORD(NtCurrentPeb()->Ldr->InInitializationOrderModuleList.Flink, LDR_DATA_TABLE_ENTRY, InInitializationOrderLinks)->DllBase)
 

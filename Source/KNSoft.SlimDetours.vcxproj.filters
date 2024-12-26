@@ -85,9 +85,9 @@
     <None Include="SlimDetours\SlimDetours.NDK.inl">
       <Filter>SlimDetours</Filter>
     </None>
-    <None Include="packages.config" />
     <None Include="SlimDetours\Utils.inl">
       <Filter>SlimDetours</Filter>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>
