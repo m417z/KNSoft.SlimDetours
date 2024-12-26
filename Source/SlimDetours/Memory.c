@@ -96,7 +96,7 @@ detour_memory_init(VOID)
     hHeap = RtlCreateHeap(HEAP_NO_SERIALIZE | HEAP_GROWABLE, NULL, 0, 0, NULL, NULL);
     if (hHeap == NULL)
     {
-        DETOUR_TRACE("RtlCreateHeap failed, fallback to process default heap\n");
+        DETOUR_TRACE("RtlCreateHeap failed, fallback to use process default heap\n");
         hHeap = NtGetProcessHeap();
     }
 

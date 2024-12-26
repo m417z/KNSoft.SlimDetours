@@ -89,8 +89,7 @@ TEST_FUNC(DeadLock)
     HANDLE hThreads[2];
     DWORD dwRet;
 
-    Status = GetEngineTypeFromArgs(TEST_PARAMETER_ARGC, TEST_PARAMETER_ARGV, &g_eEngineType);
-    if (!NT_SUCCESS(Status))
+    if (FAILED(GetEngineTypeFromArgs(TEST_PARAMETER_ARGC, TEST_PARAMETER_ARGV, &g_eEngineType)))
     {
         TEST_SKIP("Invalid engine type\n");
         return;
