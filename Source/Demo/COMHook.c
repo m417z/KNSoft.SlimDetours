@@ -74,7 +74,7 @@ TEST_FUNC(COMHook)
                             Hooked_IOpenControlPanel_GetPath);
     if (FAILED(hr))
     {
-        TEST_SKIP("SlimDetoursCOMHook failed with: 0x%08lX\n", hr);
+        TEST_FAIL("SlimDetoursCOMHook failed with: 0x%08lX\n", hr);
         goto _Exit_0;
     }
 
@@ -93,6 +93,17 @@ TEST_FUNC(COMHook)
         goto _Exit_1;
     }
     TEST_OK(Test_IOpenControlPanel_GetPath(pocp2));
+
+    hr = SlimDetoursCOMHook(&CLSID_OpenControlPanel,
+                            &IID_IOpenControlPanel,
+                            FIELD_OFFSET(IOpenControlPanelVtbl, GetPath),
+                            NULL,
+                            g_pfnIOpenControlPanel_GetPath);
+    if (FAILED(hr))
+    {
+        TEST_FAIL("SlimDetoursCOMHook failed with: 0x%08lX\n", hr);
+        goto _Exit_0;
+    }
 
     pocp2->lpVtbl->Release(pocp2);
 _Exit_1:

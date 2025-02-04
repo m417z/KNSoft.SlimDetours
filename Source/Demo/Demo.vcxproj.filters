@@ -6,11 +6,17 @@
     <ClCompile Include="DelayHook.c" />
     <ClCompile Include="TwiceSimpleHook.c" />
     <ClCompile Include="COMHook.c" />
+    <ClCompile Include="Instruction.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Demo.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Instruction.ARM64.asm" />
+    <None Include="Instruction.inc" />
+    <None Include="Instruction.inl" />
+    <None Include="Instruction.x64.asm" />
+    <None Include="Instruction.x86.asm" />
   </ItemGroup>
 </Project>

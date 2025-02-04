@@ -63,4 +63,7 @@ TEST_FUNC(TwiceSimpleHook)
 
     EqualRect(&rc, &rc);
     TEST_OK(g_lEqualRect == 2);
+
+    TEST_OK(SUCCEEDED(SlimDetoursInlineHook(FALSE, (PVOID)&g_pfnEqualRect2, Hooked_EqualRect2)));
+    TEST_OK(SUCCEEDED(SlimDetoursInlineHook(FALSE, (PVOID)&g_pfnEqualRect1, Hooked_EqualRect1)));
 }

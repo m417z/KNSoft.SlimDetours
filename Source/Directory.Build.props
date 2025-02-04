@@ -8,8 +8,9 @@
         <ClCompile>
             <WarningLevel>Level3</WarningLevel>
             <LanguageStandard>stdcpplatest</LanguageStandard>
-            <LanguageStandard_C>stdc17</LanguageStandard_C>
+            <LanguageStandard_C>stdclatest</LanguageStandard_C>
             <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+            <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
         </ClCompile>
     </ItemDefinitionGroup>
 
@@ -36,12 +37,13 @@
     </ItemDefinitionGroup>
     <ItemDefinitionGroup>
         <ClCompile>
+            <PreprocessorDefinitions>_KNSOFT_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
             <PreprocessorDefinitions>MSB_CONFIGURATION_NAME="$(ConfigurationName)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
             <PreprocessorDefinitions>MSB_MSBUILD_VERSION="$(MSBuildVersion)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
             <PreprocessorDefinitions>MSB_VCTOOLS_VERSION="$(VCToolsVersion)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
             <PreprocessorDefinitions>MSB_PLATFORM_TOOLSET="$(PlatformToolset)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
             <PreprocessorDefinitions>MSB_PLATFORM_TOOLSET_VERSION="$(PlatformToolsetVersion)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-            <PreprocessorDefinitions>MSB_PLATFORM_TARGET_VERSION="$(PlatformTarget)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>MSB_PLATFORM_TARGET="$(PlatformTarget)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
             <PreprocessorDefinitions>MSB_TARGET_PLATFORM_VERSION="$(TargetPlatformVersion)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
             <PreprocessorDefinitions>MSB_TARGET_PLATFORM_DISPLAY_NAME="$(TargetPlatformDisplayName)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
         </ClCompile>
@@ -57,6 +59,45 @@
         <ClCompile>
             <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
         </ClCompile>
+    </ItemDefinitionGroup>
+
+    <!-- Bring Macros to MASM and MARMASM -->
+    <ItemDefinitionGroup>
+        <MASM>
+            <PreprocessorDefinitions Condition="'$(Configuration)'=='Debug'">_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions Condition="'$(Configuration)'=='Release'">NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions Condition="'$(Platform)'=='x64'">_M_X64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions Condition="'$(Platform)'=='Win32'">_M_IX86;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions Condition="'$(Platform)'=='ARM64'">_M_ARM64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>_KNSOFT_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>MSB_CONFIGURATION_NAME="$(ConfigurationName)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>MSB_MSBUILD_VERSION="$(MSBuildVersion)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>MSB_PLATFORM_TOOLSET="$(PlatformToolset)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>MSB_PLATFORM_TOOLSET_VERSION="$(PlatformToolsetVersion)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>MSB_PLATFORM_TARGET="$(PlatformTarget)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>MSB_TARGET_PLATFORM_VERSION="$(TargetPlatformVersion)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+        </MASM>
+        <MARMASM>
+            <PreprocessorDefinitions Condition="'$(Configuration)'=='Debug'">_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions Condition="'$(Configuration)'=='Release'">NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions Condition="'$(Platform)'=='x64'">_M_X64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions Condition="'$(Platform)'=='Win32'">_M_IX86;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions Condition="'$(Platform)'=='ARM64'">_M_ARM64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>_KNSOFT_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>MSB_CONFIGURATION_NAME="$(ConfigurationName)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>MSB_MSBUILD_VERSION="$(MSBuildVersion)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>MSB_PLATFORM_TOOLSET="$(PlatformToolset)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>MSB_PLATFORM_TOOLSET_VERSION="$(PlatformToolsetVersion)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>MSB_PLATFORM_TARGET="$(PlatformTarget)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>MSB_TARGET_PLATFORM_VERSION="$(TargetPlatformVersion)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+        </MARMASM>
+    </ItemDefinitionGroup>
+
+    <!-- Enable Safe SEH for Release x86, as well as CL default -->
+    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+        <MASM>
+            <UseSafeExceptionHandlers>true</UseSafeExceptionHandlers>
+        </MASM>
     </ItemDefinitionGroup>
 
     <!-- Import $(MSBuildProjectName).Build.props if exists -->
