@@ -13,10 +13,8 @@
 
 Compared to the original [Detours](https://github.com/microsoft/Detours), the advantages are:
 
-- New feature
-  - **Support delay hook (set hooks automatically when target DLL loaded)** [🔗 TechWiki: Implement Delay Hook](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Docs/TechWiki/Implement%20Delay%20Hook/README.md)
-  - **Automatically update threads when set hooks** [🔗 TechWiki: Update Threads Automatically When Applying Inline Hooks](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Docs/TechWiki/Update%20Threads%20Automatically%20When%20Applying%20Inline%20Hooks/README.md)
 - Improved
+  - **Automatically update threads when set hooks** [🔗 TechWiki: Update Threads Automatically When Applying Inline Hooks](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Docs/TechWiki/Update%20Threads%20Automatically%20When%20Applying%20Inline%20Hooks/README.md)
   - **Avoid deadlocks when updating threads** [🔗 TechWiki: Avoid Deadlocking on The Heap When Updating Threads](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Docs/TechWiki/Avoid%20Deadlocking%20on%20The%20Heap%20When%20Updating%20Threads/README.md)
   - Avoid occupying system reserved memory region [🔗 TechWiki: Avoid Occupying System Reserved Region When Allocating Trampoline](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Docs/TechWiki/Avoid%20Occupying%20System%20Reserved%20Region%20When%20Allocating%20Trampoline/README.md)
   - Other bug fixes and code improvements
@@ -25,6 +23,9 @@ Compared to the original [Detours](https://github.com/microsoft/Detours), the ad
   - Retain API hooking functions only
   - Remove support for ARM (ARM32), IA64
   - Smaller binary size
+- New features
+  - **[Draft]** **Support delay hook (set hooks automatically when target DLL loaded)** [🔗 TechWiki: Implement Delay Hook](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Docs/TechWiki/Implement%20Delay%20Hook/README.md)
+  - **[Draft]** COM Hook
 
 And here is a [Todo List](https://github.com/KNSoft/KNSoft.SlimDetours/milestones?with_issues=no).
 
@@ -104,7 +105,7 @@ Artifact integration: widely compatible with MSVC generation tools (support for 
 Runtime environment: NT5 or above OS, x86/x64/ARM64 platforms.
 
 > [!CAUTION]
-> In beta stage, should be used with caution.
+> In beta stage, should be used with caution. Some APIs may be altered frequently, please keep an eye out for the release notes.
 
 ## License
 

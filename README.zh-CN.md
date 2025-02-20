@@ -13,10 +13,8 @@
 
 相比于原版[Detours](https://github.com/microsoft/Detours)，有以下优势：
 
-- 新功能
-  - **支持延迟挂钩（目标DLL加载时自动挂钩）** [🔗 技术Wiki：实现延迟挂钩](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Docs/TechWiki/Implement%20Delay%20Hook/README.zh-CN.md)
-  - **挂钩时自动更新线程** [🔗 技术Wiki：应用内联钩子时自动更新线程](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Docs/TechWiki/Update%20Threads%20Automatically%20When%20Applying%20Inline%20Hooks/README.zh-CN.md)
 - 经改进
+  - **挂钩时自动更新线程** [🔗 技术Wiki：应用内联钩子时自动更新线程](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Docs/TechWiki/Update%20Threads%20Automatically%20When%20Applying%20Inline%20Hooks/README.zh-CN.md)
   - **更新线程时避免堆死锁** [🔗 技术Wiki：更新线程时避免堆死锁](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Docs/TechWiki/Avoid%20Deadlocking%20on%20The%20Heap%20When%20Updating%20Threads/README.zh-CN.md)
   - 避免占用系统保留的内存区域 [🔗 技术Wiki：分配Trampoline时避免占用系统保留区域](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Docs/TechWiki/Avoid%20Occupying%20System%20Reserved%20Region%20When%20Allocating%20Trampoline/README.zh-CN.md)
   - 其它Bug修复与代码改进
@@ -25,6 +23,9 @@
   - 仅保留API挂钩函数
   - 移除对ARM (ARM32)、IA64的支持
   - 更小的二进制体积
+- 新功能
+  - **[草稿]** **支持延迟挂钩（目标DLL加载时自动挂钩）** [🔗 技术Wiki：实现延迟挂钩](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Docs/TechWiki/Implement%20Delay%20Hook/README.zh-CN.md)
+  - **[草稿]** COM Hook
 
   以及此处的[待办列表](https://github.com/KNSoft/KNSoft.SlimDetours/milestones?with_issues=no)。
 
@@ -104,7 +105,7 @@ SlimDetoursDelayAttach((PVOID*)&g_pfnFuncXxx,
 运行环境：NT5及以上操作系统，x86/x64/ARM64平台。
 
 > [!CAUTION]
-> 处于beta阶段，应小心使用。
+> 处于beta阶段，应慎重使用。有些API可能频繁调整，请留意发行说明。
 
 ## 协议
 
