@@ -153,9 +153,9 @@ detour_thread_update(
         return Status;
     }
 
-    for (o = PendingOperations; o != NULL; o = o->pNext)
+    bUpdateContext = FALSE;
+    for (o = PendingOperations; o != NULL && !bUpdateContext; o = o->pNext)
     {
-        bUpdateContext = FALSE;
         if (o->fIsRemove)
         {
             if (cxt.CONTEXT_PC >= (ULONG_PTR)o->pTrampoline->rbCode &&
@@ -172,7 +172,7 @@ detour_thread_update(
                 bUpdateContext = TRUE;
             }
 #endif
-        } else
+        } else if (o->fIsAdd)
         {
             if (cxt.CONTEXT_PC >= (ULONG_PTR)o->pbTarget &&
                 cxt.CONTEXT_PC < ((ULONG_PTR)o->pbTarget + o->pTrampoline->cbRestore))
@@ -182,11 +182,11 @@ detour_thread_update(
                 bUpdateContext = TRUE;
             }
         }
-        if (bUpdateContext)
-        {
-            Status = NtSetContextThread(ThreadHandle, &cxt);
-            break;
-        }
+    }
+
+    if (bUpdateContext)
+    {
+        Status = NtSetContextThread(ThreadHandle, &cxt);
     }
 
     return Status;
