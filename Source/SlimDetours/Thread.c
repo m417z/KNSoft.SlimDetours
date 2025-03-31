@@ -135,7 +135,18 @@ detour_thread_update(
     CONTEXT cxt;
     BOOL bUpdateContext;
 
+    /*
+     * Work-around an issue in Arm64 (and Arm64EC) in which LR and FP registers may become zeroed
+     * when CONTEXT_CONTROL is used without CONTEXT_INTEGER.
+     * 
+     * See also: https://github.com/microsoft/Detours/pull/313
+     */
+#if defined(_AMD64_) || defined(_ARM64_)
+    cxt.ContextFlags = CONTEXT_CONTROL | CONTEXT_INTEGER;
+#else
     cxt.ContextFlags = CONTEXT_CONTROL;
+#endif
+
     Status = NtGetContextThread(ThreadHandle, &cxt);
     if (!NT_SUCCESS(Status))
     {
