@@ -85,15 +85,14 @@ detour_is_imported(
     /* Step forward to IMAGE_OPTIONAL_HEADER and check magic */
     _STATIC_ASSERT(UFIELD_OFFSET(IMAGE_OPTIONAL_HEADER, Magic) == 0);
     wNtMagic = pNtHeader->OptionalHeader.Magic;
-    if ((wNtMagic != IMAGE_NT_OPTIONAL_HDR64_MAGIC ||
-         pNtHeader->FileHeader.SizeOfOptionalHeader != sizeof(IMAGE_OPTIONAL_HEADER64)) &&
-        (wNtMagic != IMAGE_NT_OPTIONAL_HDR32_MAGIC ||
-         pNtHeader->FileHeader.SizeOfOptionalHeader != sizeof(IMAGE_OPTIONAL_HEADER32)))
+    if (wNtMagic != IMAGE_NT_OPTIONAL_HDR_MAGIC ||
+        pNtHeader->FileHeader.SizeOfOptionalHeader != sizeof(IMAGE_OPTIONAL_HEADER))
     {
         return FALSE;
     }
 
-    if (pbAddress < Add2Ptr(mbi.AllocationBase,
+    if (pNtHeader->OptionalHeader.NumberOfRvaAndSizes <= IMAGE_DIRECTORY_ENTRY_IAT ||
+        pbAddress < Add2Ptr(mbi.AllocationBase,
                             pNtHeader->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IAT].VirtualAddress) ||
         pbAddress >= Add2Ptr(mbi.AllocationBase,
                              pNtHeader->OptionalHeader
