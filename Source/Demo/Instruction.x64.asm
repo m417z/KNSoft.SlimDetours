@@ -10,7 +10,7 @@ SimpleInstructionFunc1X64 PROC
 
 SimpleInstructionFunc1X64 ENDP
 
-.data
+.const
 
 $PublicFuncAddr SimpleInstructionFunc1X64
 

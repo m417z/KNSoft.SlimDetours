@@ -311,6 +311,7 @@ SlimDetoursAttach(
     // This happens when the detour does nothing other than call the target.
     if (pDetour == (PVOID)pbTarget)
     {
+        Status = STATUS_INVALID_PARAMETER;
         DETOUR_BREAK();
         goto fail;
     }

@@ -23,6 +23,7 @@ detour_thread_suspend(
     HANDLE CurrentTID = (HANDLE)(ULONG_PTR)NtCurrentThreadId();
     BOOL ClosePrevThread = FALSE;
     HANDLE ThreadHandle = NULL;
+
     while (TRUE)
     {
         HANDLE NextThreadHandle;
@@ -44,23 +45,18 @@ detour_thread_suspend(
         ThreadHandle = NextThreadHandle;
         ClosePrevThread = TRUE;
 
+        /* Skip the current thread */
         if (!CurrentThreadSkipped)
         {
             THREAD_BASIC_INFORMATION BasicInformation;
-            Status = NtQueryInformationThread(
-                ThreadHandle,
-                ThreadBasicInformation,
-                &BasicInformation,
-                sizeof(BasicInformation),
-                NULL
-            );
-            if (!NT_SUCCESS(Status))
+            if (!NT_SUCCESS(NtQueryInformationThread(ThreadHandle,
+                                                     ThreadBasicInformation,
+                                                     &BasicInformation,
+                                                     sizeof(BasicInformation),
+                                                     NULL)))
             {
-                NtClose(ThreadHandle);
-                break;
+                continue;
             }
-
-            /* Skip the current thread */
             if (BasicInformation.ClientId.UniqueThread == CurrentTID)
             {
                 CurrentThreadSkipped = TRUE;

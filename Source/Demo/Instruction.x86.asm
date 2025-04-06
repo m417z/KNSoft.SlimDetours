@@ -14,7 +14,7 @@ SimpleInstructionFunc1X86 PROC
 
 SimpleInstructionFunc1X86 ENDP
 
-.data
+.const
 
 $PublicFuncAddr SimpleInstructionFunc1X86
 
