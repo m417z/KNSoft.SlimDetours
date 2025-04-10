@@ -120,7 +120,7 @@ SlimDetoursTransactionAbort(VOID)
         pMem = o->pbTarget;
         sMem = o->pTrampoline->cbRestore;
         NtProtectVirtualMemory(NtCurrentProcess(), &pMem, &sMem, o->dwPerm, &dwOld);
-        if (o->fIsAdd)
+        if (o->dwOperation == DETOUR_OPERATION_ADD)
         {
             detour_free_trampoline(o->pTrampoline);
             o->pTrampoline = NULL;
@@ -177,7 +177,7 @@ SlimDetoursTransactionCommit(VOID)
     o = s_pPendingOperations;
     do
     {
-        if (o->fIsRemove)
+        if (o->dwOperation == DETOUR_OPERATION_REMOVE)
         {
             // Check if the jmps still points where we expect, otherwise someone might have hooked us.
             BOOL hookIsStillThere =
@@ -195,13 +195,13 @@ SlimDetoursTransactionCommit(VOID)
             } else
             {
                 // Don't remove in this case, put in bypass mode and leak trampoline.
-                o->fIsRemove = FALSE;
+                o->dwOperation = DETOUR_OPERATION_NONE;
                 o->pTrampoline->pbDetour = o->pTrampoline->rbCode;
                 DETOUR_TRACE("detours: Leaked hook on pbTarget=%p due to external hooking\n", o->pbTarget);
             }
 
             *o->ppbPointer = o->pbTarget;
-        } else if (o->fIsAdd)
+        } else if (o->dwOperation == DETOUR_OPERATION_ADD)
         {
             DETOUR_TRACE("detours: pbTramp =%p, pbRemain=%p, pbDetour=%p, cbRestore=%u\n",
                          o->pTrampoline,
@@ -268,7 +268,7 @@ SlimDetoursTransactionCommit(VOID)
         pMem = o->pbTarget;
         sMem = o->pTrampoline->cbRestore;
         NtProtectVirtualMemory(NtCurrentProcess(), &pMem, &sMem, o->dwPerm, &dwOld);
-        if (o->fIsRemove)
+        if (o->dwOperation == DETOUR_OPERATION_REMOVE)
         {
             detour_free_trampoline(o->pTrampoline);
             o->pTrampoline = NULL;
@@ -492,8 +492,7 @@ fail:
                  pTrampoline->rbCode[8], pTrampoline->rbCode[9],
                  pTrampoline->rbCode[10], pTrampoline->rbCode[11]);
 
-    o->fIsAdd = TRUE;
-    o->fIsRemove = FALSE;
+    o->dwOperation = DETOUR_OPERATION_ADD;
     o->ppbPointer = (PBYTE*)ppPointer;
     o->pTrampoline = pTrampoline;
     o->pbTarget = pbTarget;
@@ -556,8 +555,7 @@ fail:
         goto fail;
     }
 
-    o->fIsAdd = FALSE;
-    o->fIsRemove = TRUE;
+    o->dwOperation = DETOUR_OPERATION_REMOVE;
     o->ppbPointer = (PBYTE*)ppPointer;
     o->pTrampoline = pTrampoline;
     o->pbTarget = pbTarget;
