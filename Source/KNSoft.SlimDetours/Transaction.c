@@ -185,7 +185,7 @@ SlimDetoursTransactionAbort(VOID)
         pMem = o->pbTarget;
         sMem = o->pTrampoline->cbRestore;
         NtProtectVirtualMemory(NtCurrentProcess(), &pMem, &sMem, o->dwPerm, &dwOld);
-        if (o->fIsAdd)
+        if (o->dwOperation == DETOUR_OPERATION_ADD)
         {
             detour_free_trampoline(o->pTrampoline);
             o->pTrampoline = NULL;
@@ -250,7 +250,7 @@ SlimDetoursTransactionCommit(VOID)
     // Insert each of the detours.
     for (o = s_pPendingOperations; o != NULL; o = o->pNext)
     {
-        if (!o->fIsAdd)
+        if (o->dwOperation != DETOUR_OPERATION_ADD)
         {
             continue;
         }
@@ -277,7 +277,7 @@ SlimDetoursTransactionCommit(VOID)
 
             for (n = s_pPendingOperations; n != o; n = n->pNext)
             {
-                if (n->fIsAdd && n->pbTarget == o->pbTarget)
+                if (n->dwOperation == DETOUR_OPERATION_ADD && n->pbTarget == o->pbTarget)
                 {
                     m = n;
                 }
@@ -386,7 +386,7 @@ SlimDetoursTransactionCommit(VOID)
         fProgress = FALSE;
         for (o = s_pPendingOperations; o != NULL; o = o->pNext)
         {
-            if (!o->fIsRemove || o->fIsRestored || !detour_is_hook_at_target(o))
+            if (o->dwOperation != DETOUR_OPERATION_REMOVE || o->fIsRestored || !detour_is_hook_at_target(o))
             {
                 continue;
             }
@@ -400,7 +400,7 @@ SlimDetoursTransactionCommit(VOID)
 
     for (o = s_pPendingOperations; o != NULL; o = o->pNext)
     {
-        if (!o->fIsRemove)
+        if (o->dwOperation != DETOUR_OPERATION_REMOVE)
         {
             continue;
         }
@@ -409,7 +409,7 @@ SlimDetoursTransactionCommit(VOID)
         {
             // The hook is buried under one which is not removed here, or someone else hooked over
             // it. Don't remove in this case, put in bypass mode and leak trampoline.
-            o->fIsRemove = FALSE;
+            o->dwOperation = DETOUR_OPERATION_NONE;
             o->pTrampoline->pbDetour = o->pTrampoline->rbCode;
             DETOUR_TRACE("detours: Leaked hook on pbTarget=%p, another hook is patched over it\n", o->pbTarget);
         }
@@ -434,7 +434,7 @@ SlimDetoursTransactionCommit(VOID)
         pMem = o->pbTarget;
         sMem = o->pTrampoline->cbRestore;
         NtProtectVirtualMemory(NtCurrentProcess(), &pMem, &sMem, o->dwPerm, &dwOld);
-        if (o->fIsRemove)
+        if (o->dwOperation == DETOUR_OPERATION_REMOVE)
         {
             detour_free_trampoline(o->pTrampoline);
             o->pTrampoline = NULL;
@@ -717,8 +717,7 @@ fail:
                  pTrampoline->rbCode[8], pTrampoline->rbCode[9],
                  pTrampoline->rbCode[10], pTrampoline->rbCode[11]);
 
-    o->fIsAdd = TRUE;
-    o->fIsRemove = FALSE;
+    o->dwOperation = DETOUR_OPERATION_ADD;
     o->fIsRestored = FALSE;
 #if defined(_M_ARM64EC)
     o->fTargetArm64Ec = fTargetArm64Ec;
@@ -801,8 +800,7 @@ fail:
         goto fail;
     }
 
-    o->fIsAdd = FALSE;
-    o->fIsRemove = TRUE;
+    o->dwOperation = DETOUR_OPERATION_REMOVE;
     o->fIsRestored = FALSE;
 #if defined(_M_ARM64EC)
     o->fTargetArm64Ec = fTargetArm64Ec;
