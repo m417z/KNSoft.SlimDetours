@@ -117,6 +117,7 @@ struct _DETOUR_OPERATION
     PBYTE pbTarget;
     PDETOUR_TRAMPOLINE pTrampoline;
     ULONG dwPerm;
+    PVOID* ppTrampolineToFreeManually;
 };
 
 /* Memory management */
