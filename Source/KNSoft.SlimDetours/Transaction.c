@@ -93,6 +93,7 @@ SlimDetoursTransactionBeginEx(
     Status = detour_writable_trampoline_regions();
     if (!NT_SUCCESS(Status))
     {
+        detour_runnable_trampoline_regions();
         goto fail;
     }
 
@@ -234,10 +235,15 @@ SlimDetoursTransactionCommit(VOID)
                 NtFlushInstructionCache(NtCurrentProcess(), o->pbTarget, o->pTrampoline->cbRestore);
             } else
             {
-                // Don't remove in this case, put in bypass mode and leak trampoline.
+                // Don't remove and leak trampoline in this case.
                 o->dwOperation = DETOUR_OPERATION_NONE;
-                o->pTrampoline->pbDetour = o->pTrampoline->rbCode;
                 DETOUR_TRACE("detours: Leaked hook on pbTarget=%p due to external hooking\n", o->pbTarget);
+            }
+
+            if (o->dwOperation == DETOUR_OPERATION_NONE || o->ppTrampolineToFreeManually != NULL)
+            {
+                // The trampoline outlives the transaction, put the hook in bypass mode.
+                o->pTrampoline->pbDetour = o->pTrampoline->rbCode;
             }
 
             *o->ppbPointer = o->pbTarget;
@@ -325,9 +331,16 @@ SlimDetoursTransactionCommit(VOID)
         NtProtectVirtualMemory(NtCurrentProcess(), &pMem, &sMem, o->dwPerm, &dwOld);
         if (o->dwOperation == DETOUR_OPERATION_REMOVE)
         {
-            detour_free_trampoline(o->pTrampoline);
+            if (!o->ppTrampolineToFreeManually)
+            {
+                detour_free_trampoline(o->pTrampoline);
+                freed = TRUE;
+            } else
+            {
+                // The caller is responsible for freeing the trampoline.
+                *o->ppTrampolineToFreeManually = o->pTrampoline;
+            }
             o->pTrampoline = NULL;
-            freed = TRUE;
         }
 
         n = o->pNext;
@@ -607,6 +620,7 @@ fail:
     o->pTrampoline = pTrampoline;
     o->pbTarget = pbTarget;
     o->dwPerm = dwOld;
+    o->ppTrampolineToFreeManually = NULL;
     o->pNext = s_pPendingOperations;
     s_pPendingOperations = o;
 
@@ -615,9 +629,10 @@ fail:
 
 HRESULT
 NTAPI
-SlimDetoursDetach(
+SlimDetoursDetachEx(
     _Inout_ PVOID* ppPointer,
-    _In_ PVOID pDetour)
+    _In_ PVOID pDetour,
+    _In_ PCDETOUR_DETACH_OPTIONS pOptions)
 {
     NTSTATUS Status;
     PVOID pMem;
@@ -626,6 +641,11 @@ SlimDetoursDetach(
 #if defined(_M_ARM64EC)
     BOOL fTargetArm64Ec, fDetourArm64Ec;
 #endif
+
+    if (pOptions->ppTrampolineToFreeManually != NULL)
+    {
+        *pOptions->ppTrampolineToFreeManually = NULL;
+    }
 
     if (s_nPendingThreadId != NtCurrentThreadId())
     {
@@ -689,10 +709,55 @@ fail:
     o->pTrampoline = pTrampoline;
     o->pbTarget = pbTarget;
     o->dwPerm = dwOld;
+    o->ppTrampolineToFreeManually = pOptions->ppTrampolineToFreeManually;
     o->pNext = s_pPendingOperations;
     s_pPendingOperations = o;
 
     return HRESULT_FROM_NT(STATUS_SUCCESS);
+}
+
+HRESULT
+NTAPI
+SlimDetoursFreeTrampoline(
+    _Frees_ptr_opt_ _Post_invalid_ PVOID pTrampoline)
+{
+    NTSTATUS Status;
+
+    if (pTrampoline == NULL)
+    {
+        return HRESULT_FROM_NT(STATUS_SUCCESS);
+    }
+
+    // This function can be called as part of a transaction or outside of a transaction.
+    HANDLE nPrevPendingThreadId = _InterlockedCompareExchangePointer(&s_nPendingThreadId, NtCurrentThreadId(), NULL);
+    BOOL bInTransaction = nPrevPendingThreadId != NULL;
+    if (bInTransaction && nPrevPendingThreadId != NtCurrentThreadId())
+    {
+        return HRESULT_FROM_NT(STATUS_TRANSACTIONAL_CONFLICT);
+    }
+
+    // Make sure the trampoline pages are writable.
+    Status = bInTransaction ? STATUS_SUCCESS : detour_writable_trampoline_regions();
+    if (NT_SUCCESS(Status))
+    {
+        detour_free_trampoline((PDETOUR_TRAMPOLINE)pTrampoline);
+        detour_free_trampoline_region_if_unused((PDETOUR_TRAMPOLINE)pTrampoline);
+    }
+
+    if (!bInTransaction)
+    {
+        // Make sure the trampoline pages are no longer writable, including the ones that were
+        // already flipped when detour_writable_trampoline_regions failed part way through.
+        detour_runnable_trampoline_regions();
+#ifdef _MSC_VER
+#pragma warning(disable: __WARNING_INTERLOCKED_ACCESS)
+#endif
+        s_nPendingThreadId = NULL;
+#ifdef _MSC_VER
+#pragma warning(default: __WARNING_INTERLOCKED_ACCESS)
+#endif
+    }
+    return HRESULT_FROM_NT(Status);
 }
 
 HRESULT
