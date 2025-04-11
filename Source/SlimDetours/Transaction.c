@@ -250,11 +250,13 @@ SlimDetoursTransactionCommit(VOID)
             NtFlushInstructionCache(NtCurrentProcess(), o->pbTarget, o->pTrampoline->cbRestore);
         } else
         {
-            // Don't remove in this case, put in bypass mode and leak trampoline.
+            // Don't remove and leak trampoline in this case.
             o->dwOperation = DETOUR_OPERATION_NONE;
-            o->pTrampoline->pbDetour = o->pTrampoline->rbCode;
             DETOUR_TRACE("detours: Leaked hook on pbTarget=%p due to external hooking\n", o->pbTarget);
         }
+
+        // Put hook in bypass mode.
+        o->pTrampoline->pbDetour = o->pTrampoline->rbCode;
 
         *o->ppbPointer = o->pbTarget;
     }
@@ -274,9 +276,16 @@ SlimDetoursTransactionCommit(VOID)
         NtProtectVirtualMemory(NtCurrentProcess(), &pMem, &sMem, o->dwPerm, &dwOld);
         if (o->dwOperation == DETOUR_OPERATION_REMOVE)
         {
-            detour_free_trampoline(o->pTrampoline);
+            if (!o->ppTrampolineToFreeManually)
+            {
+                detour_free_trampoline(o->pTrampoline);
+                freed = TRUE;
+            } else
+            {
+                // The caller is responsible for freeing the trampoline.
+                *o->ppTrampolineToFreeManually = o->pTrampoline;
+            }
             o->pTrampoline = NULL;
-            freed = TRUE;
         }
 
         n = o->pNext;
@@ -516,9 +525,10 @@ fail:
 
 HRESULT
 NTAPI
-SlimDetoursDetach(
+SlimDetoursDetachEx(
     _Inout_ PVOID* ppPointer,
-    _In_ PVOID pDetour)
+    _In_ PVOID pDetour,
+    _In_ PCDETOUR_DETACH_OPTIONS pOptions)
 {
     NTSTATUS Status;
     PVOID pMem;
@@ -571,10 +581,65 @@ fail:
     o->pTrampoline = pTrampoline;
     o->pbTarget = pbTarget;
     o->dwPerm = dwOld;
+    o->ppTrampolineToFreeManually = pOptions->ppTrampolineToFreeManually;
     o->pNext = s_pPendingOperations;
     s_pPendingOperations = o;
 
     return HRESULT_FROM_NT(STATUS_SUCCESS);
+}
+
+HRESULT
+NTAPI
+SlimDetoursFreeTrampoline(
+    _In_ PVOID pTrampoline)
+{
+    if (pTrampoline == NULL)
+    {
+        return HRESULT_FROM_NT(STATUS_SUCCESS);
+    }
+
+    // This function can be called as part of a transaction or outside of a transaction.
+    HANDLE nPrevPendingThreadId = _InterlockedCompareExchangePointer(&s_nPendingThreadId, NtCurrentThreadId(), NULL);
+    BOOL bInTransaction = nPrevPendingThreadId != NULL;
+    if (bInTransaction && nPrevPendingThreadId != NtCurrentThreadId())
+    {
+        return HRESULT_FROM_NT(STATUS_TRANSACTIONAL_CONFLICT);
+    }
+
+    NTSTATUS Status;
+
+    if (!bInTransaction)
+    {
+        // Make sure the trampoline pages are writable.
+        Status = detour_writable_trampoline_regions();
+        if (!NT_SUCCESS(Status))
+        {
+            goto fail;
+        }
+    }
+
+    detour_free_trampoline((PDETOUR_TRAMPOLINE)pTrampoline);
+    detour_free_trampoline_region_if_unused((PDETOUR_TRAMPOLINE)pTrampoline);
+
+    if (!bInTransaction)
+    {
+        detour_runnable_trampoline_regions();
+    }
+
+    Status = STATUS_SUCCESS;
+
+fail:
+    if (!bInTransaction)
+    {
+#ifdef _MSC_VER
+#pragma warning(disable: __WARNING_INTERLOCKED_ACCESS)
+#endif
+        s_nPendingThreadId = NULL;
+#ifdef _MSC_VER
+#pragma warning(default: __WARNING_INTERLOCKED_ACCESS)
+#endif
+    }
+    return HRESULT_FROM_NT(Status);
 }
 
 HRESULT
