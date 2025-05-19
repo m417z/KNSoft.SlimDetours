@@ -46,7 +46,7 @@ static PDETOUR_DELAY_ATTACH g_DelayedAttaches = NULL;
 
 #endif /* (NTDDI_VERSION >= NTDDI_WIN6) */
 
-static _Interlocked_operand_ ULONG volatile s_nPendingThreadId = 0; // Thread owning pending transaction.
+static _Interlocked_operand_ HANDLE volatile s_nPendingThreadId = NULL; // Thread owning pending transaction.
 static PHANDLE s_phSuspendedThreads = NULL;
 static ULONG s_ulSuspendedThreadCount = 0;
 static PDETOUR_OPERATION s_pPendingOperations = NULL;
@@ -59,7 +59,7 @@ SlimDetoursTransactionBeginEx(
     NTSTATUS Status;
 
     // Make sure only one thread can start a transaction.
-    if (_InterlockedCompareExchange(&s_nPendingThreadId, NtCurrentThreadId(), 0) != 0)
+    if (_InterlockedCompareExchangePointer(&s_nPendingThreadId, NtCurrentThreadId(), NULL) != NULL)
     {
         return HRESULT_FROM_NT(STATUS_TRANSACTIONAL_CONFLICT);
     }
@@ -92,7 +92,7 @@ fail:
 #ifdef _MSC_VER
 #pragma warning(disable: __WARNING_INTERLOCKED_ACCESS)
 #endif
-    s_nPendingThreadId = 0;
+    s_nPendingThreadId = NULL;
 #ifdef _MSC_VER
 #pragma warning(default: __WARNING_INTERLOCKED_ACCESS)
 #endif
@@ -139,7 +139,7 @@ SlimDetoursTransactionAbort(VOID)
 
     s_phSuspendedThreads = NULL;
     s_ulSuspendedThreadCount = 0;
-    s_nPendingThreadId = 0;
+    s_nPendingThreadId = NULL;
     return HRESULT_FROM_NT(STATUS_SUCCESS);
 }
 
@@ -287,7 +287,7 @@ _exit:
     detour_thread_resume(s_phSuspendedThreads, s_ulSuspendedThreadCount);
     s_phSuspendedThreads = NULL;
     s_ulSuspendedThreadCount = 0;
-    s_nPendingThreadId = 0;
+    s_nPendingThreadId = NULL;
 
     return HRESULT_FROM_NT(STATUS_SUCCESS);
 }

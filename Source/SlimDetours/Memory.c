@@ -19,13 +19,13 @@
  * Use MI_ASLR_* provided by KNSoft.NDK instead of hard-coded.
  */
 
-#define SYSTEM_RESERVED_REGION_HIGHEST ((ULONG_PTR)MI_ASLR_HIGHEST_SYSTEM_RANGE_ADDRESS - 1)
+#define SYSTEM_RESERVED_REGION_HIGHEST ((ULONG_PTR)MI_ASLR_HIGHEST_SYSTEM_RANGE_ADDRESS)
 #define SYSTEM_RESERVED_REGION_SIZE (MI_ASLR_BITMAP_SIZE * (ULONG_PTR)CHAR_BIT * MM_ALLOCATION_GRANULARITY)
 #define SYSTEM_RESERVED_REGION_LOWEST (SYSTEM_RESERVED_REGION_HIGHEST - SYSTEM_RESERVED_REGION_SIZE + 1)
 
 #if defined(_WIN64)
 _STATIC_ASSERT(SYSTEM_RESERVED_REGION_HIGHEST + 1 == 0x00007FFFFFFF0000ULL);
-_STATIC_ASSERT(SYSTEM_RESERVED_REGION_SIZE == GB_TO_BYTES(32ULL));
+_STATIC_ASSERT(SYSTEM_RESERVED_REGION_SIZE == _32GB);
 _STATIC_ASSERT(SYSTEM_RESERVED_REGION_LOWEST == 0x00007FF7FFFF0000ULL);
 
 static ULONG_PTR s_ulSystemRegionHighLowerBound = MAXULONG_PTR;
@@ -33,7 +33,7 @@ static ULONG_PTR s_ulSystemRegionLowUpperBound = 0;
 static ULONG_PTR s_ulSystemRegionLowLowerBound = 0;
 #else
 _STATIC_ASSERT(SYSTEM_RESERVED_REGION_HIGHEST + 1 == 0x78000000UL);
-_STATIC_ASSERT(SYSTEM_RESERVED_REGION_SIZE == MB_TO_BYTES(640UL));
+_STATIC_ASSERT(SYSTEM_RESERVED_REGION_SIZE == _640MB);
 _STATIC_ASSERT(SYSTEM_RESERVED_REGION_LOWEST == 0x50000000UL);
 
 static ULONG_PTR s_ulSystemRegionLowUpperBound = SYSTEM_RESERVED_REGION_HIGHEST;
@@ -97,7 +97,7 @@ detour_memory_init(VOID)
     if (hHeap == NULL)
     {
         DETOUR_TRACE("RtlCreateHeap failed, fallback to use process default heap\n");
-        hHeap = NtGetProcessHeap();
+        hHeap = RtlProcessHeap();
     }
 
     return hHeap;
@@ -144,7 +144,7 @@ detour_memory_free(
 BOOL
 detour_memory_uninitialize(VOID)
 {
-    if (_detour_memory_heap != NULL && _detour_memory_heap != NtGetProcessHeap())
+    if (_detour_memory_heap != NULL && _detour_memory_heap != RtlProcessHeap())
     {
         _detour_memory_heap = RtlDestroyHeap(_detour_memory_heap);
         return _detour_memory_heap == NULL;

@@ -14,11 +14,6 @@
 #define DETOUR_BREAK()
 #endif
 
-#define _512KB KB_TO_BYTES((ULONG_PTR)512)
-#define _1MB MB_TO_BYTES((ULONG_PTR)1)
-#define _1GB GB_TO_BYTES((ULONG_PTR)1)
-#define _2GB GB_TO_BYTES((ULONG_PTR)2)
-
 EXTERN_C_START
 
 /* Basic structures */

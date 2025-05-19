@@ -20,7 +20,7 @@ detour_thread_suspend(
     ULONG BufferCapacity = ARRAYSIZE(s_Handles);
     ULONG SuspendedCount = 0;
     BOOL CurrentThreadSkipped = FALSE;
-    HANDLE CurrentTID = (HANDLE)(ULONG_PTR)NtCurrentThreadId();
+    HANDLE CurrentTID = NtCurrentThreadId();
     BOOL ClosePrevThread = FALSE;
     HANDLE ThreadHandle = NULL;
 
