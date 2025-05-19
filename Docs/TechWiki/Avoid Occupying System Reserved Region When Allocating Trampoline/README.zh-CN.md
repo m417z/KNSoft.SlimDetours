@@ -7,17 +7,19 @@
 
 ## Windows为系统DLL保留的区域
 
-Windows自NT6起引入ASLR，随之为系统DLL在用户模式下预留了一段区域，使得同一个系统DLL在不同进程中都能映射到这片保留区域的同一位置，加载一次后即可复用该次重定位信息避免后续加载再次进行重定位操作。
+挂钩库分配Trampoline时一般优先从挂钩目标函数附近寻找可用的内存空间，如此挂钩系统API时十分可能占用系统DLL使用的区域，导致本应加载到该位置的系统DLL加载到别地并额外进行重定位操作。
 
-这个机制在《Windows Internals 7th Part1》第五章《Memory	management》的“Image randomization”小节有详细说明，此处不再赘述，只给出我参考该书并经过分析得到的确切保留范围是：  
-32位进程：[0x50000000 ... 0x78000000]，共640MB  
-64位进程：[0x00007FF7FFFF0000 ... 0x00007FFFFFFF0000]，共32GB
+Windows自NT6起引入ASLR，随之为系统DLL在用户模式下明确地预留了一段区域，使得同一个系统DLL在不同进程中都能映射到这片保留区域的同一位置，加载一次后即可复用该次重定位信息避免后续加载再次进行重定位操作。
 
-挂钩库分配Trampoline时一般优先从挂钩目标函数附近寻找可用的内存空间，如此挂钩系统API时十分容易占用这个保留区域，导致本应加载到该位置的系统DLL加载到别地并额外进行重定位操作。
+这个机制在《Windows Internals 7th Part1》第五章《Memory	management》的“Image randomization”小节有详细说明，此处不再赘述，我参考该书并经过分析`ntoskrnl.exe!MiInitializeRelocations`得到的确切保留范围是：  
+32位进程：[0x50000000 ... 0x78000000)，共640MB  
+64位进程：[0x00007FF7FFFF0000 ... 0x00007FFFFFFF0000)，共32GB
+
+即使没有ASLR，也可以考虑从顶部保留一定大小的区域。
 
 ## 其它挂钩库的做法
 
-[Detours](https://github.com/microsoft/Detours)作为微软官方的挂钩库，已考虑到系统保留区域不能给Trampoline使用这一点，但它硬编码了仅适用于NT5的[0x70000000 ... 0x80000000]地址范围进行规避：
+[Detours](https://github.com/microsoft/Detours)作为微软官方的挂钩库，已考虑到系统保留区域不能给Trampoline使用这一点，它硬编码[0x70000000 ... 0x80000000]地址范围进行规避：
 ```C
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -26,6 +28,9 @@ Windows自NT6起引入ASLR，随之为系统DLL在用户模式下预留了一段
 static PVOID    s_pSystemRegionLowerBound   = (PVOID)(ULONG_PTR)0x70000000;
 static PVOID    s_pSystemRegionUpperBound   = (PVOID)(ULONG_PTR)0x80000000;
 ```
+
+此范围仅适用于NT5，64位NT5中ntdll.dll、kernel32.dll、user32.dll也仍在此范围内。
+
 同样注意到此问题的[jdu2600](https://github.com/jdu2600)为[Detours](https://github.com/microsoft/Detours)开了一个非官方的PR [microsoft/Detours PR #307](https://github.com/microsoft/Detours/pull/307) 想更新这个范围以适配最新的Windows。
 
 [MinHook](https://github.com/TsudaKageyu/minhook)与[mhook](https://github.com/martona/mhook)都是熟知的Windows API挂钩库，遗憾的是它们似乎都没有考虑到这个问题。
@@ -44,7 +49,7 @@ static PVOID    s_pSystemRegionUpperBound   = (PVOID)(ULONG_PTR)0x80000000;
 
 `Ntdll.dll`被ASLR随机加载到保留范围内较低的内存地址，后续DLL随后排布触底时，将切换到保留范围顶部继续排布，在这个情况下“`Ntdll.dll`之后的1GB范围”便是2块不连续的区域。
 
-[SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours)的具体实现与规避范围均有别于上述PR，更进一步的，为NT5与NT6+分别考虑，并调用`NtQuerySystemInformation`获得比硬编码更确切的用户地址空间范围，协助约束Trampoline的选址，参考[KNSoft.SlimDetours/Source/SlimDetours/Memory.c于main · KNSoft/KNSoft.SlimDetours](../../../Source/SlimDetours/Memory.c)。
+[SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours)的具体实现与规避范围均有别于上述PR，为不同NT版本进行了更周到的考虑，比如在NT6.0及NT6.1中ASLR可以被注册表`HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management`项`MoveImages`键设置关闭。还调用`NtQuerySystemInformation`了获得比硬编码更确切的用户地址空间范围，协助约束Trampoline的选址，参考[KNSoft.SlimDetours/Source/SlimDetours/Memory.c于main · KNSoft/KNSoft.SlimDetours](../../../Source/SlimDetours/Memory.c)。
 
 <br>
 <hr>

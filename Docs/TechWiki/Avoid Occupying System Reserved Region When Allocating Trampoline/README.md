@@ -7,17 +7,19 @@
 
 ## Windows reserved region for system DLLs
 
-Windows introduced ASLR since NT6, a region has been reserved for system DLLs, so that the same system DLL can be mapped at the same location in the reserved region inside different processes, the relocation information can be reused after being loaded once to avoid the relocation operation again on subsequent loading.
+Hooking libraries usually preferred to find available memory space near the hook target function when allocating trampoline, so it's very likely to occupy the area used by the system DLL, causing the system DLL that should be loaded to that location to be loaded to another place and perform additional relocation operations.
 
-This mechanism is introduced in detail in the "Image randomization" section of Chapter 5 "Memory management" in "Windows Internals 7th Part 1", here will not go into details, but the exact reserved region that I have obtained by referring to the book and analyzing is given:  
-32-bit process：[0x50000000 ... 0x78000000], a total of 640MB  
-64-bit process：[0x00007FF7FFFF0000 ... 0x00007FFFFFFF0000], a total of 32GB
+Windows introduced ASLR since NT6, a region has been reserved for system DLLs explicitly, so that the same system DLL can be mapped at the same location in the reserved region inside different processes, the relocation information can be reused after being loaded once to avoid the relocation operation again on subsequent loading.
 
-Hooking libraries usually preferred to find available memory space near the hook target function when allocating trampoline, so it's very prone to occupy this reserved region when hooking system APIs, causing the system DLL that should be loaded to that location to be loaded to another place and perform additional relocation operations.
+This mechanism is introduced in detail in the "Image randomization" section of Chapter 5 "Memory management" in "Windows Internals 7th Part 1", here will not go into details, the exact reserved region that I have obtained by referring to the book and analyzing `ntoskrnl.exe!MiInitializeRelocations` is:  
+32-bit process：[0x50000000 ... 0x78000000), a total of 640MB  
+64-bit process：[0x00007FF7FFFF0000 ... 0x00007FFFFFFF0000), a total of 32GB
+
+Even without ASLR, consider keeping a certain size area from the top.
 
 ## Other hooking libraries' practices
 
-[Detours](https://github.com/microsoft/Detours) as Microsoft's official hooking library, has taken into account that the system reserved region cannot be used for trampolines, but it hardcodes the [0x70000000 ... 0x80000000] address range to circumvent which is for NT5 only:
+[Detours](https://github.com/microsoft/Detours) as Microsoft's official hooking library, has taken into account that the system reserved region cannot be used for trampolines, it hardcodes the [0x70000000 ... 0x80000000] address range to circumvent:
 ```C
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -26,6 +28,9 @@ Hooking libraries usually preferred to find available memory space near the hook
 static PVOID    s_pSystemRegionLowerBound   = (PVOID)(ULONG_PTR)0x70000000;
 static PVOID    s_pSystemRegionUpperBound   = (PVOID)(ULONG_PTR)0x80000000;
 ```
+
+This range only applies to NT5, ntdll.dll, kernel32.dll, and user32.dll remain within this range in 64-bit NT5.
+
 [jdu2600](https://github.com/jdu2600) is also aware of this issue and has opened an unofficial PR [microsoft/Detours PR #307](https://github.com/microsoft/Detours/pull/307) for [Detours](https://github.com/microsoft/Detours) wants to update this range to adapt the latest Windows.
 
 [MinHook](https://github.com/TsudaKageyu/minhook) and [mhook](https://github.com/martona/mhook) are both well-known Windows API hooking libraries, but unfortunately they don't seem to take this issue into account.
@@ -44,7 +49,7 @@ ASLR only reserves a range of 640MB in size for 32-bit systems, which can be dir
 
 `Ntdll.dll` is randomly loaded by ASLR to a memory address lower in the reserved range, and when the subsequent DLL layout bottoms out, it will wrap to the top of the reserved range and continue to be arranged, in which case the "1GB range after `Ntdll.dll`" is 2 discontinuous regions.
 
-[SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours)' implementation details and circumvention range are different from the above PR, furthermore, NT5 and NT6+ are considered separately, and calls `NtQuerySystemInformation` to obtain a more accurate user address space range than hardcoded to help constrain the location of trampolines, see [KNSoft.SlimDetours/Source/SlimDetours/Memory.c at main · KNSoft/KNSoft.SlimDetours](../../../Source/SlimDetours/Memory.c).
+[SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours)' implementation details and circumvention range are different from the above PR, more thoughtful consideration has been given to different NT versions, e.g. in NT6.0 and NT6.1 ASLR can be turned off by the `MoveImages` value under `HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management` key in the registry. And calls `NtQuerySystemInformation` to obtain a more accurate user address space range than hardcoded to help constrain the location of trampolines, see also [KNSoft.SlimDetours/Source/SlimDetours/Memory.c at main · KNSoft/KNSoft.SlimDetours](../../../Source/SlimDetours/Memory.c).
 
 <br>
 <hr>
