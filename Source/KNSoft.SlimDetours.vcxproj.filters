@@ -60,9 +60,6 @@
     <ClCompile Include="Detours\src\modules.cpp">
       <Filter>Detours</Filter>
     </ClCompile>
-    <ClCompile Include="SlimDetours\FuncTableHook.c">
-      <Filter>SlimDetours</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SlimDetours\SlimDetours.h">
@@ -83,9 +80,6 @@
       <Filter>Detours</Filter>
     </None>
     <None Include="SlimDetours\SlimDetours.NDK.inl">
-      <Filter>SlimDetours</Filter>
-    </None>
-    <None Include="SlimDetours\Utils.inl">
       <Filter>SlimDetours</Filter>
     </None>
     <None Include="packages.config" />

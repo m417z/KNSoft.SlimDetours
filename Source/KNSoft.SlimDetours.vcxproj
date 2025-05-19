@@ -192,7 +192,6 @@
     <ClCompile Include="Detours\src\modules.cpp" />
     <None Include="Detours\src\uimports.cpp" />
     <ClCompile Include="SlimDetours\Disassembler.c" />
-    <ClCompile Include="SlimDetours\FuncTableHook.c" />
     <ClCompile Include="SlimDetours\Instruction.c" />
     <ClCompile Include="SlimDetours\Memory.c" />
     <ClCompile Include="SlimDetours\Thread.c" />
@@ -201,7 +200,6 @@
     <ClCompile Include="SlimDetours\InlineHook.c" />
     <None Include="packages.config" />
     <None Include="SlimDetours\SlimDetours.NDK.inl" />
-    <None Include="SlimDetours\Utils.inl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Detours\src\detours.h" />

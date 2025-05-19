@@ -166,7 +166,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="COMHook.c" />
     <ClCompile Include="DeadLock.c" />
     <ClCompile Include="DelayHook.c" />
     <ClCompile Include="Instruction.c" />

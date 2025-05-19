@@ -26,67 +26,7 @@
 > [!TIP]
 > 如果你想了解Windows上“[DLL加载通知](https://learn.microsoft.com/en-us/windows/win32/devnotes/dll-load-notification)”的内部实现，参考我为[ReactOS](https://github.com/reactos/reactos)贡献的[ReactOS PR #6795](https://github.com/reactos/reactos/pull/6795)。不要参考[WINE的实现](https://gitlab.winehq.org/wine/wine/-/commit/4c13e1765f559b322d8c071b2e23add914981db7)，因为它截至此文编写时存在错误，例如，它的`LdrUnregisterDllNotification`没有检查节点是否处于链表中就进行了移除。
 
-## 在SlimDetours中使用“延迟挂钩”
-
-[SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours)提供了`SlimDetoursDelayAttach`函数注册延迟挂钩，具体可参考该函数声明上方的注释以及[示例：DelayHook](../../../Source/Demo/DelayHook.c)。
-
-该示例中，先调用了`SlimDetoursDelayAttach`注册对`User32.dll!EqualRect`API的延迟挂钩，并通过检查它和`LdrGetDllHandle`的返回值确认此时`User32.dll`并未加载：
-```C
-/* Register SlimDetours delay hook */
-hr = SlimDetoursDelayAttach((PVOID*)&g_pfnEqualRect,
-                             Hooked_EqualRect,
-                             g_usUser32.Buffer,
-                             g_asEqualRect.Buffer,
-                             DelayAttachCallback,
-                             NULL);
-if (FAILED(hr))
-{
-    TEST_FAIL("SlimDetoursDelayAttach failed with 0x%08lX\n", hr);
-    return;
-} else if (hr != HRESULT_FROM_NT(STATUS_PENDING))
-{
-    TEST_FAIL("SlimDetoursDelayAttach succeeded with 0x%08lX, which is not using delay attach\n", hr);
-    return;
-}
-
-/* Make sure user32.dll is not loaded yet */
-Status = LdrGetDllHandle(NULL, NULL, &g_usUser32, &hUser32);
-if (NT_SUCCESS(Status))
-{
-    TEST_SKIP("user32.dll is loaded, test cannot continue\n");
-    return;
-} else if (Status != STATUS_DLL_NOT_FOUND)
-{
-    TEST_SKIP("LdrGetDllHandle failed with 0x%08lX\n", Status);
-    return;
-}
-```
-
-然后调用`LdrLoadDll`加载`User32.dll`：
-```C
-/* Load user32.dll now */
-Status = LdrLoadDll(NULL, NULL, &g_usUser32, &hUser32);
-if (!NT_SUCCESS(Status))
-{
-    TEST_SKIP("LdrLoadDll failed with 0x%08lX\n", Status);
-    return;
-}
-```
-
-此时若`User32.dll`成功加载，则之前注册的延迟挂钩应已挂钩完成，进而验证延迟挂钩回调被正确调用以及`User32.dll!EqualRect`函数被成功挂钩：
-```C
-/* Delay attach callback should be called and EqualRect is hooked successfully */
-TEST_OK(g_bDelayAttach);
-Status = LdrGetProcedureAddress(hUser32, &g_asEqualRect, 0, (PVOID*)&pfnEqualRect);
-if (NT_SUCCESS(Status))
-{
-    TEST_OK(pfnEqualRect(&rc1, &rc2) == TRUE);
-    TEST_OK(g_lEqualRectCount == 1);
-} else
-{
-    TEST_SKIP("LdrGetProcedureAddress failed with 0x%08lX\n", Status);
-}
-```
+[示例：DelayHook](../../../Source/Demo/DelayHook.c)演示了使用此机制实现在DLL加载时挂钩其中函数。
 
 <br>
 <hr>

@@ -23,9 +23,6 @@ Compared to the original [Detours](https://github.com/microsoft/Detours), the ad
   - Retain API hooking functions only
   - Remove support for ARM (ARM32), IA64
   - Smaller binary size
-- New features
-  - **[Draft]** **Support delay hook (set hooks automatically when target DLL loaded)** [🔗 TechWiki: Implement Delay Hook](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Docs/TechWiki/Implement%20Delay%20Hook/README.md)
-  - **[Draft]** COM Hook
 
 And here is a [Todo List](https://github.com/KNSoft/KNSoft.SlimDetours/milestones?with_issues=no).
 
@@ -80,21 +77,6 @@ if (FAILED(hr))
 }
 return SlimDetoursTransactionCommit();
 ```
-
-### Delay Hook
-
-"Delay Hook" will set hooks automatically when target DLL loaded, supported on NT6+.
-
-For example, call `SlimDetoursDelayAttach` to hook `a.dll!FuncXxx` automatically when `a.dll` loaded:
-```C
-SlimDetoursDelayAttach((PVOID*)&g_pfnFuncXxx,
-                       Hooked_FuncXxx,
-                       L"a.dll",
-                       L"FuncXxx",
-                       NULL,
-                       NULL);
-```
-Demo: [DelayHook.c](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/Demo/DelayHook.c)
 
 ## Compatibility
 

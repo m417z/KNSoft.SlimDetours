@@ -5,7 +5,6 @@
     <ClCompile Include="DeadLock.c" />
     <ClCompile Include="DelayHook.c" />
     <ClCompile Include="TwiceSimpleHook.c" />
-    <ClCompile Include="COMHook.c" />
     <ClCompile Include="Instruction.c" />
   </ItemGroup>
   <ItemGroup>

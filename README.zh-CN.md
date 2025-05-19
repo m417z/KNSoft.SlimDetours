@@ -23,9 +23,6 @@
   - 仅保留API挂钩函数
   - 移除对ARM (ARM32)、IA64的支持
   - 更小的二进制体积
-- 新功能
-  - **[草稿]** **支持延迟挂钩（目标DLL加载时自动挂钩）** [🔗 技术Wiki：实现延迟挂钩](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Docs/TechWiki/Implement%20Delay%20Hook/README.zh-CN.md)
-  - **[草稿]** COM Hook
 
   以及此处的[待办列表](https://github.com/KNSoft/KNSoft.SlimDetours/milestones?with_issues=no)。
 
@@ -80,21 +77,6 @@ if (FAILED(hr))
 }
 return SlimDetoursTransactionCommit();
 ```
-
-### 延迟挂钩
-
-“延迟挂钩”将在目标DLL加载时自动挂钩，在NT6+上支持。
-
-比如，调用`SlimDetoursDelayAttach`来在`a.dll`加载时自动挂勾`a.dll!FuncXxx`：
-```C
-SlimDetoursDelayAttach((PVOID*)&g_pfnFuncXxx,
-                       Hooked_FuncXxx,
-                       L"a.dll",
-                       L"FuncXxx",
-                       NULL,
-                       NULL);
-```
-演示：[DelayHook.c](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/Demo/DelayHook.c)
 
 ## 兼容性
 

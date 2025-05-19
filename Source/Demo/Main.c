@@ -3,17 +3,19 @@
 #include <KNSoft/NDK/Package/UnitTest.inl>
 
 TEST_DECL_FUNC(DeadLock);
-TEST_DECL_FUNC(DelayHook);
 TEST_DECL_FUNC(TwiceSimpleHook);
-TEST_DECL_FUNC(COMHook);
 TEST_DECL_FUNC(Instruction);
+#if _WIN32_WINNT >= _WIN32_WINNT_WIN6
+TEST_DECL_FUNC(DelayHook);
+#endif
 
 CONST UNITTEST_ENTRY UnitTestList[] = {
     TEST_DECL_ENTRY(DeadLock),
-    TEST_DECL_ENTRY(DelayHook),
     TEST_DECL_ENTRY(TwiceSimpleHook),
-    TEST_DECL_ENTRY(COMHook),
     TEST_DECL_ENTRY(Instruction),
+#if _WIN32_WINNT >= _WIN32_WINNT_WIN6
+    TEST_DECL_ENTRY(DelayHook),
+#endif
     { 0 }
 };
 
