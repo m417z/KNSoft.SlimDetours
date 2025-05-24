@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <SdkDdkVer.h>
+
 #include "SlimDetours.NDK.inl"
 #include "SlimDetours.h"
 
