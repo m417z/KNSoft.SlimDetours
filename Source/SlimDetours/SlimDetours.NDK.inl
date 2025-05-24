@@ -31,18 +31,10 @@
 #include <ndk/mmfuncs.h>
 #include <ndk/kefuncs.h>
 #include <ndk/psfuncs.h>
+#include <ndk/cmfuncs.h>
 #include <ndk/rtlfuncs.h>
 #include <ndk/umfuncs.h>
 
-#endif
-
-/* Backwards compatible */
-#if (NTDDI_VERSION < NTDDI_WIN8)
-typedef ULONG LOGICAL, *PLOGICAL;
-#endif
-
-#ifndef FAST_FAIL_INVALID_ARG
-#define FAST_FAIL_INVALID_ARG 5
 #endif
 
 /* Add KNSoft.NDK specific stuff */
@@ -86,10 +78,29 @@ C_ASSERT((ULONG_PTR)MI_ASLR_HIGHEST_SYSTEM_RANGE_ADDRESS - (ULONG_PTR)MI_ASLR_LO
 #define NtCurrentThreadId() ((HANDLE)NtCurrentTeb()->ClientId.UniqueThread)
 #define NtGetNtdllBase() (CONTAINING_RECORD(NtCurrentPeb()->Ldr->InInitializationOrderModuleList.Flink, LDR_DATA_TABLE_ENTRY, InInitializationOrderLinks)->DllBase)
 
+#define RtlProcessHeap() (NtCurrentPeb()->ProcessHeap)
+
 #if defined(_WIN64)
 #define DECLSPEC_POINTERALIGN DECLSPEC_ALIGN(8)
 #else
 #define DECLSPEC_POINTERALIGN DECLSPEC_ALIGN(4)
 #endif
+
+#define DEFINE_ANYSIZE_STRUCT(varName, baseType, arrayType, arraySize) struct {\
+    baseType BaseType;\
+    arrayType Array[(arraySize) - 1];\
+} varName
+
+#define _1KB (1024ULL)
+#define _1MB (1024ULL * _1KB)
+#define _1GB (1024ULL * _1MB)
+
+#define _KB(x) ((x) * _1KB)
+#define _MB(x) ((x) * _1MB)
+#define _GB(x) ((x) * _1GB)
+
+#define _512KB  _KB(512)
+#define _640MB  _MB(640)
+#define _2GB    _GB(2)
 
 #endif

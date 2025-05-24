@@ -32,11 +32,9 @@ And here is a [Todo List](https://github.com/KNSoft/KNSoft.SlimDetours/milestone
 
 ### TL;DR
 
-KNSoft.SlimDetours package contains both of [SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours) and the original [Microsoft Detours](https://github.com/microsoft/Detours).
+[KNSoft.SlimDetours package](https://www.nuget.org/packages/KNSoft.SlimDetours) is out-of-the-box, contains both of [SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours) and the original [Microsoft Detours](https://github.com/microsoft/Detours), install to project and the compiled library will be linked automatically.
 
 Include header [SlimDetours.h](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/SlimDetours/SlimDetours.h) for KNSoft.SlimDetours, or header [detours.h](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/Detours/src/detours.h) for the original [Microsoft Detours](https://github.com/microsoft/Detours), then link compiled library `KNSoft.SlimDetours.lib`.
-
-NuGet package [KNSoft.SlimDetours](https://www.nuget.org/packages/KNSoft.SlimDetours) is out-of-the-box, install to project and the compiled library will be linked automatically.
 
 ```C
 #include <KNSoft/SlimDetours/SlimDetours.h> // KNSoft.SlimDetours
@@ -80,7 +78,7 @@ return SlimDetoursTransactionCommit();
 
 ## Compatibility
 
-Project building: support for the latest MSVC generation tools and SDKs is mainly considered. The code in this project is backwards compatible with the MSVC generation tool and GCC, but it depends on the NDK it depends on, see also [SlimDetours.NDK.inl](./Source/SlimDetours/SlimDetours.NDK.inl). Can be built with [ReactOS](https://github.com/reactos/reactos).
+Project building: support for the latest MSVC generation tools and SDKs is mainly considered. The code in this project is backwards compatible with the MSVC generation tool and GCC, but it depends on the NDK it depends on, see also [SlimDetours.NDK.inl](./Source/SlimDetours/SlimDetours.NDK.inl). Can be built with [ReactOS](https://github.com/reactos/reactos). The minimum target platform is NT6 by default, specifying the `_WIN32_WINNT` macro in compiling-time to build binaries that target to lower NT versions.
 
 Artifact integration: widely compatible with MSVC generation tools (support for VS2015 is known), and different compilation configurations (e.g., `/MD`, `/MT`).
 

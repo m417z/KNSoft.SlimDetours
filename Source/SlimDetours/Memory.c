@@ -71,7 +71,7 @@ static HANDLE _detour_memory_heap = NULL;
  */
 static
 FORCEINLINE
-LOGICAL
+BOOL
 detour_memory_is_aslr_enabled(VOID)
 {
     NTSTATUS Status;
