@@ -1,7 +1,7 @@
 | **English (en-US)** | [简体中文 (zh-CN)](./README.zh-CN.md) |
 | --- | --- |
 
-<br>
+&nbsp;
 
 # Update Threads Automatically When Applying Inline Hooks
 

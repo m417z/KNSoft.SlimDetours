@@ -1,7 +1,7 @@
 | [English (en-US)](./README.md) | **简体中文 (zh-CN)** |
 | --- | --- |
 
-<br>
+&nbsp;
 
 # 更新线程时避免堆死锁
 
@@ -99,7 +99,7 @@ Worker Thread	Demo.exe!SetHookThread	Demo.exe!__acrt_lock
 _detour_memory_heap = RtlCreateHeap(HEAP_NO_SERIALIZE | HEAP_GROWABLE, NULL, 0, 0, NULL, NULL);
 ```
 > [!NOTE]
-> [Detours](https://github.com/microsoft/Detours)已有事务机制，[SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours)新添功能“[延迟挂钩](../Implement%20Delay%20Hook/README.zh-CN.md)”也用了[SRW锁](https://learn.microsoft.com/en-us/windows/win32/sync/slim-reader-writer--srw--locks)，所以此堆无需序列化访问。
+> [Detours](https://github.com/microsoft/Detours)已有事务机制，所以此堆无需序列化访问。
 
 [MinHook](https://github.com/TsudaKageyu/minhook)在其初始化函数`MH_Initialize`中创建，而[SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours)在首个被调用的内存分配函数中进行一次初始化时创建，故没有也不需要单独的初始化函数。
 

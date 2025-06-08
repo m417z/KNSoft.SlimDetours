@@ -1,7 +1,7 @@
 | [English (en-US)](./README.md) | **简体中文 (zh-CN)** |
 | --- | --- |
 
-<br>
+&nbsp;
 
 # 分配Trampoline时避免占用系统保留区域
 
@@ -11,7 +11,7 @@
 
 Windows自NT6起引入ASLR，随之为系统DLL在用户模式下明确地预留了一段区域，使得同一个系统DLL在不同进程中都能映射到这片保留区域的同一位置，加载一次后即可复用该次重定位信息避免后续加载再次进行重定位操作。
 
-这个机制在《Windows Internals 7th Part1》第五章《Memory	management》的“Image randomization”小节有详细说明，此处不再赘述，我参考该书并经过分析`ntoskrnl.exe!MiInitializeRelocations`得到的确切保留范围是：  
+这个机制在《Windows Internals 7th Part1》第五章《Memory management》的“Image randomization”小节有详细说明，此处不再赘述，我参考该书并经过分析`ntoskrnl.exe!MiInitializeRelocations`得到的确切保留范围是：  
 32位进程：[0x50000000 ... 0x78000000)，共640MB  
 64位进程：[0x00007FF7FFFF0000 ... 0x00007FFFFFFF0000)，共32GB
 

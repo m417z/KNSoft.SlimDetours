@@ -1,15 +1,13 @@
 | [English (en-US)](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/README.md) | **简体中文 (zh-CN)** |
 | --- | --- |
 
-<br>
+&nbsp;
 
 # KNSoft.SlimDetours
 
 [![NuGet Downloads](https://img.shields.io/nuget/dt/KNSoft.SlimDetours)](https://www.nuget.org/packages/KNSoft.SlimDetours) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/KNSoft/KNSoft.SlimDetours/msbuild.yml)](https://github.com/KNSoft/KNSoft.SlimDetours/actions/workflows/msbuild.yml) ![PR Welcome](https://img.shields.io/badge/PR-welcome-0688CB.svg) [![GitHub License](https://img.shields.io/github/license/KNSoft/KNSoft.SlimDetours)](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/LICENSE)
 
 [SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours)是一个基于[Microsoft Detours](https://github.com/microsoft/Detours)改进而来的Windows API挂钩库。
-
-## 功能
 
 相比于原版[Detours](https://github.com/microsoft/Detours)，有以下优势：
 

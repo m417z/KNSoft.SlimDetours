@@ -2,7 +2,7 @@
 | --- | --- |
 
 
-<br>
+&nbsp;
 
 # Avoid Deadlocking on The Heap When Updating Threads
 
@@ -99,7 +99,7 @@ Both of [MinHook](https://github.com/TsudaKageyu/minhook) and [SlimDetours](http
 _detour_memory_heap = RtlCreateHeap(HEAP_NO_SERIALIZE | HEAP_GROWABLE, NULL, 0, 0, NULL, NULL);
 ```
 > [!NOTE]
-> [Detours](https://github.com/microsoft/Detours) already has a transaction mechanism, and [SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours)' new feature "[Delay Hook](../Implement%20Delay%20Hook/README.md)" also uses SRW locks, so this heap does not need serialized access.
+> [Detours](https://github.com/microsoft/Detours) already has a transaction mechanism, so this heap does not need serialized access.
 
 [MinHook](https://github.com/TsudaKageyu/minhook) creates in its initialization function `MH_Initialize`, and [SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours) creates in one-time initialization in the first called memory allocation function, so there is no and no need for a separate initialization function.
 

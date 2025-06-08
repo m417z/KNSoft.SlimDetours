@@ -1,7 +1,7 @@
 | [English (en-US)](./README.md) | **简体中文 (zh-CN)** |
 | --- | --- |
 
-<br>
+&nbsp;
 
 # 应用内联钩子时自动更新线程
 
@@ -54,7 +54,7 @@ while (GetThreadContext(hThread, &ctx))
 
 [SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours)获取其它线程的方式有两个，以NT5为目标时同样调用[NtQuerySystemInformation](https://learn.microsoft.com/en-us/windows/win32/api/winternl/nf-winternl-ntquerysysteminformation)，而以NT6+为目标（默认）时则采用`NtGetNextThread`以大幅提升性能和正确性保障。
 
-线程的更新沿袭了[Detours](https://github.com/microsoft/Detours)并进行了一些修正。
+线程的更新沿袭了[Detours](https://github.com/microsoft/Detours)并进行了一些修正和改进。
 
 要点：
 1. 调用`NtGetNextThread`以遍历当前进程所有线程
