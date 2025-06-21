@@ -48,22 +48,22 @@ TEST_FUNC(TwiceSimpleHook)
     }
 
     g_pfnEqualRect1 = g_pfnEqualRect2 = g_pfnEqualRect;
-    hr = SlimDetoursInlineHook(TRUE, (PVOID)&g_pfnEqualRect1, Hooked_EqualRect1);
+    hr = SlimDetoursInlineHook(TRUE, (PVOID*)&g_pfnEqualRect1, Hooked_EqualRect1);
     if (FAILED(hr))
     {
         TEST_SKIP("1st SlimDetoursInlineHook failed with 0x%08lX\n", hr);
         return;
     }
-    hr = SlimDetoursInlineHook(TRUE, (PVOID)&g_pfnEqualRect2, Hooked_EqualRect2);
+    hr = SlimDetoursInlineHook(TRUE, (PVOID*)&g_pfnEqualRect2, Hooked_EqualRect2);
     if (FAILED(hr))
     {
         TEST_SKIP("2nd SlimDetoursInlineHook failed with 0x%08lX\n", hr);
         return;
     }
 
-    g_pfnEqualRect(&rc, &rc);
+    TEST_OK(g_pfnEqualRect(&rc, &rc) != FALSE);
     TEST_OK(g_lEqualRect == 2);
 
-    TEST_OK(SUCCEEDED(SlimDetoursInlineHook(FALSE, (PVOID)&g_pfnEqualRect2, Hooked_EqualRect2)));
-    TEST_OK(SUCCEEDED(SlimDetoursInlineHook(FALSE, (PVOID)&g_pfnEqualRect1, Hooked_EqualRect1)));
+    TEST_OK(SUCCEEDED(SlimDetoursInlineHook(FALSE, (PVOID*)&g_pfnEqualRect2, Hooked_EqualRect2)));
+    TEST_OK(SUCCEEDED(SlimDetoursInlineHook(FALSE, (PVOID*)&g_pfnEqualRect1, Hooked_EqualRect1)));
 }

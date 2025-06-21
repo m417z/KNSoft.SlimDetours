@@ -43,11 +43,10 @@ static FN_INSTRUCTION** g_apfnInstructionFunctions[] = {
 
 TEST_FUNC(Instruction)
 {
-    ULONG i;
     HRESULT hr;
     FN_INSTRUCTION *pfn1, *pfn2;
 
-    for (i = 0; i < ARRAYSIZE(g_apfnInstructionFunctions) && g_apfnInstructionFunctions[i] != NULL; i++)
+    for (ULONG i = 0; i < ARRAYSIZE(g_apfnInstructionFunctions) && g_apfnInstructionFunctions[i] != NULL; i++)
     {
         pfn2 = pfn1 = *g_apfnInstructionFunctions[i];
         if (pfn1() != (ULONG_PTR)PRESET_RETURN_VALUE)

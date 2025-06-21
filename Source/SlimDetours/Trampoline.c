@@ -432,9 +432,7 @@ detour_align_from_trampoline(
     _In_ PDETOUR_TRAMPOLINE pTrampoline,
     BYTE obTrampoline)
 {
-    ULONG n;
-
-    for (n = 0; n < ARRAYSIZE(pTrampoline->rAlign); n++)
+    for (ULONG n = 0; n < ARRAYSIZE(pTrampoline->rAlign); n++)
     {
         if (pTrampoline->rAlign[n].obTrampoline == obTrampoline)
         {
@@ -449,9 +447,7 @@ detour_align_from_target(
     _In_ PDETOUR_TRAMPOLINE pTrampoline,
     BYTE obTarget)
 {
-    ULONG n;
-
-    for (n = 0; n < ARRAYSIZE(pTrampoline->rAlign); n++)
+    for (ULONG n = 0; n < ARRAYSIZE(pTrampoline->rAlign); n++)
     {
         if (pTrampoline->rAlign[n].obTarget == obTarget)
         {

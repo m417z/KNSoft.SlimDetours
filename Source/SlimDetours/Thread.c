@@ -248,7 +248,7 @@ _Suspend_next_thread:
     goto _Suspend_next_thread;
 
 _Fail:
-    for (UINT i = 0; i < SuspendedCount; ++i)
+    for (ULONG i = 0; i < SuspendedCount; ++i)
     {
         NtResumeThread(Buffer[i], NULL);
         NtClose(Buffer[i]);
@@ -273,9 +273,7 @@ detour_thread_resume(
     _In_reads_(SuspendedHandleCount) _Frees_ptr_ PHANDLE SuspendedHandles,
     _In_ ULONG SuspendedHandleCount)
 {
-    ULONG i;
-
-    for (i = 0; i < SuspendedHandleCount; i++)
+    for (ULONG i = 0; i < SuspendedHandleCount; i++)
     {
         NtResumeThread(SuspendedHandles[i], NULL);
         NtClose(SuspendedHandles[i]);
@@ -293,7 +291,6 @@ detour_thread_update(
     _In_ PDETOUR_OPERATION PendingOperations)
 {
     NTSTATUS Status;
-    PDETOUR_OPERATION o;
     CONTEXT cxt;
     BOOL bUpdateContext;
 
@@ -316,7 +313,7 @@ detour_thread_update(
     }
 
     bUpdateContext = FALSE;
-    for (o = PendingOperations; o != NULL && !bUpdateContext; o = o->pNext)
+    for (PDETOUR_OPERATION o = PendingOperations; o != NULL && !bUpdateContext; o = o->pNext)
     {
         if (o->fIsRemove)
         {
