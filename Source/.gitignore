@@ -1,7 +1,7 @@
 .vs
 *.user
+*.aps
 
-/Compatibility
 /packages
 /OutDir
 IntDir
