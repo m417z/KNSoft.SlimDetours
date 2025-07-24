@@ -44,9 +44,9 @@ HRESULT GetEngineTypeFromArgs(
 
     for (i = 0; i < ArgC; i++)
     {
-        if (_wcsnicmp(ArgV[i], DEMO_SWITCH_ENGINE, _STR_CCH_LEN(DEMO_SWITCH_ENGINE)) == 0)
+        if (_wcsnicmp(ArgV[i], DEMO_SWITCH_ENGINE, _STR_LEN(DEMO_SWITCH_ENGINE)) == 0)
         {
-            pszEngineType = ArgV[i] + _STR_CCH_LEN(DEMO_SWITCH_ENGINE);
+            pszEngineType = ArgV[i] + _STR_LEN(DEMO_SWITCH_ENGINE);
             if (_wcsicmp(pszEngineType, L"SlimDetours") == 0)
             {
                 *EngineType = EngineSlimDetours;
