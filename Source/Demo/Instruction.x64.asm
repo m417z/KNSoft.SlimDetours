@@ -1,7 +1,8 @@
-include Instruction.inc
+INCLUDE Instruction.inc
 
-.code
+.CODE
 
+ALIGN 16
 SimpleInstructionFunc1X64 PROC
 
     xor     rax, rax
@@ -9,9 +10,5 @@ SimpleInstructionFunc1X64 PROC
     ret
 
 SimpleInstructionFunc1X64 ENDP
-
-.const
-
-$PublicFuncAddr SimpleInstructionFunc1X64
 
 END
