@@ -30,6 +30,12 @@ jobs:
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: msbuild ${{env.SOLUTION_FILE_PATH}} /restore /m /p:Configuration=${{matrix.config}} /p:Platform=${{matrix.platform}} /p:RestorePackagesConfig=true
+    - name: Archive outputs
+      uses: actions/upload-artifact@main
+      with:
+        name: KNSoft.SlimDetours-${{matrix.platform}}-${{matrix.config}}-${{github.sha}}
+        path: |
+          .\Source\OutDir\${{matrix.platform}}\${{matrix.config}}
     - name: Run demos and tests (x64, x86)
       if: ${{ matrix.platform == 'x64' || matrix.platform == 'x86' }}
       working-directory: ${{env.GITHUB_WORKSPACE}}
