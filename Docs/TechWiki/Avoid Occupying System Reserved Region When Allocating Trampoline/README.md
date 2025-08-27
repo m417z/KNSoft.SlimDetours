@@ -7,7 +7,7 @@
 
 ## Windows reserved region for system DLLs
 
-Hooking libraries usually preferred to find available memory space near the hook target function when allocating trampoline, so it's very likely to occupy the area used by the system DLL, causing the system DLL that should be loaded to that location to be loaded to another place and perform additional relocation operations.
+Hooking libraries usually preferred to find available memory space near the hook target function when allocating trampoline, so it's very likely to occupy the area used by the system DLL, causing the system DLL that should be loaded to that location to be loaded to another place and perform additional relocation operations, it can even cause a `STATUS_ILLEGAL_DLL_RELOCATION (0xC0000269)` exception (for example, when kernel32.dll or user32.dll is affected).
 
 Windows introduced ASLR since NT6, a region has been reserved for system DLLs explicitly, so that the same system DLL can be mapped at the same location in the reserved region inside different processes, the relocation information can be reused after being loaded once to avoid the relocation operation again on subsequent loading.
 

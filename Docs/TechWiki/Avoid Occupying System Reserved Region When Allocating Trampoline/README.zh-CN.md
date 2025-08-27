@@ -7,7 +7,7 @@
 
 ## Windows为系统DLL保留的区域
 
-挂钩库分配Trampoline时一般优先从挂钩目标函数附近寻找可用的内存空间，如此挂钩系统API时十分可能占用系统DLL使用的区域，导致本应加载到该位置的系统DLL加载到别地并额外进行重定位操作。
+挂钩库分配Trampoline时一般优先从挂钩目标函数附近寻找可用的内存空间，如此挂钩系统API时十分可能占用系统DLL使用的区域，导致本应加载到该位置的系统DLL加载到别地并额外进行重定位操作，甚至引起`STATUS_ILLEGAL_DLL_RELOCATION (0xC0000269)`异常（比如kernel32.dll、user32.dll受影响时）。
 
 Windows自NT6起引入ASLR，随之为系统DLL在用户模式下明确地预留了一段区域，使得同一个系统DLL在不同进程中都能映射到这片保留区域的同一位置，加载一次后即可复用该次重定位信息避免后续加载再次进行重定位操作。
 
@@ -49,7 +49,7 @@ static PVOID    s_pSystemRegionUpperBound   = (PVOID)(ULONG_PTR)0x80000000;
 
 `Ntdll.dll`被ASLR随机加载到保留范围内较低的内存地址，后续DLL随后排布触底时，将切换到保留范围顶部继续排布，在这个情况下“`Ntdll.dll`之后的1GB范围”便是2块不连续的区域。
 
-[SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours)的具体实现与规避范围均有别于上述PR，为不同NT版本进行了更周到的考虑，比如在NT6.0及NT6.1中ASLR可以被注册表`HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management`项`MoveImages`键设置关闭。还调用`NtQuerySystemInformation`了获得比硬编码更确切的用户地址空间范围，协助约束Trampoline的选址，参考[KNSoft.SlimDetours/Source/SlimDetours/Memory.c于main · KNSoft/KNSoft.SlimDetours](../../../Source/SlimDetours/Memory.c)。
+[SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours)的具体实现与规避范围均有别于上述PR，为不同NT版本进行了更周到的考虑，比如在NT6.0及NT6.1中ASLR可以被注册表`HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management`项`MoveImages`键设置关闭。还调用`NtQuerySystemInformation`以获得比硬编码更确切的用户地址空间范围，协助约束Trampoline的选址，参考[KNSoft.SlimDetours/Source/SlimDetours/Memory.c于main · KNSoft/KNSoft.SlimDetours](../../../Source/SlimDetours/Memory.c)。
 
 <br>
 <hr>
