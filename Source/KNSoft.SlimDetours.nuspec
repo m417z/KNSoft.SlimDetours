@@ -18,10 +18,12 @@
     <file src="..\README.md" target="" />
     <file src="KNSoft.SlimDetours.targets" target="build\" />
 
-    <file src="SlimDetours\*.h" target="build\Include\KNSoft\SlimDetours\" />
-    <file src="Detours\src\*.h" target="build\Include\KNSoft\SlimDetours\" />
+    <file src="KNSoft.SlimDetours\*.h" target="build\Include\KNSoft\SlimDetours\" />
+    <file src="Microsoft.Detours\src\*.h" target="build\Include\KNSoft\SlimDetours\" />
 
     <file src="OutDir\**\KNSoft.SlimDetours.lib" target="build\Lib\" />
     <file src="OutDir\**\KNSoft.SlimDetours.pdb" target="build\Lib\" />
+    <file src="OutDir\**\Microsoft.Detours.lib" target="build\Lib\" />
+    <file src="OutDir\**\Microsoft.Detours.pdb" target="build\Lib\" />
   </files>
 </package>

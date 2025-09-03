@@ -4,8 +4,8 @@
 #include <KNSoft/NDK/Package/UnitTest.h>
 #include <KNSoft/NDK/Package/StrSafe.inl>
 
-#include "../SlimDetours/SlimDetours.h"
-#include "../Detours/src/detours.h"
+#include "../KNSoft.SlimDetours/SlimDetours.h"
+#include "../Microsoft.Detours/src/detours.h"
 
 EXTERN_C_START
 
