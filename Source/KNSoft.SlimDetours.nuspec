@@ -21,9 +21,9 @@
     <file src="KNSoft.SlimDetours\*.h" target="build\Include\KNSoft\SlimDetours\" />
     <file src="Microsoft.Detours\src\*.h" target="build\Include\KNSoft\SlimDetours\" />
 
-    <file src="OutDir\**\KNSoft.SlimDetours.lib" target="build\Lib\" />
-    <file src="OutDir\**\KNSoft.SlimDetours.pdb" target="build\Lib\" />
-    <file src="OutDir\**\Microsoft.Detours.lib" target="build\Lib\" />
-    <file src="OutDir\**\Microsoft.Detours.pdb" target="build\Lib\" />
+    <file src="OutDir\**\*.lib" exclude="OutDir\x86\**" target="build\Lib\" />
+    <file src="OutDir\**\*.pdb" exclude="OutDir\x86\**;OutDir\**\Demo.pdb" target="build\Lib\" />
+    <file src="OutDir\x86\**\*.lib" target="build\Lib\Win32\" />
+    <file src="OutDir\x86\**\*.pdb" exclude="OutDir\x86\**\Demo.pdb" target="build\Lib\Win32\" />
   </files>
 </package>

@@ -13,7 +13,7 @@ ULONG_PTR
 _cdecl
 FN_INSTRUCTION(VOID);
 
-#if defined(_M_X64)
+#if defined(_M_X64) && !defined(_M_ARM64EC)
 
 EXTERN_C FN_INSTRUCTION SimpleInstructionFunc1X64;
 
@@ -33,7 +33,7 @@ Hooked_InstructionFunc(VOID)
 }
 
 static FN_INSTRUCTION* g_apfnInstructionFunctions[] = {
-#if defined(_M_X64)
+#if defined(_M_X64) && !defined(_M_ARM64EC)
     &SimpleInstructionFunc1X64,
 #elif defined(_M_IX86)
     &SimpleInstructionFunc1X86,
