@@ -30,18 +30,25 @@
 
 ### 提要
 
-[KNSoft.SlimDetours NuGet包](https://www.nuget.org/packages/KNSoft.SlimDetours)是开箱即用的，同时含有[SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours)与原版[Microsoft Detours](https://github.com/microsoft/Detours)，只要安装到项目，编译好的库就会自动加入链接。
-
-对于KNSoft.SlimDetours包含[SlimDetours.h](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/SlimDetours/SlimDetours.h)头文件，或者对于原版[Microsoft Detours](https://github.com/microsoft/Detours)包含[detours.h](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/Detours/src/detours.h)头文件，然后链接编译出的库`KNSoft.SlimDetours.lib`。
+[KNSoft.SlimDetours NuGet包](https://www.nuget.org/packages/KNSoft.SlimDetours)是开箱即用的，同时含有[SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours)与最新的[Microsoft Detours](https://github.com/microsoft/Detours)，包含对应的头文件（[SlimDetours.h](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/SlimDetours/SlimDetours.h) or [detours.h](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/Microsoft.Detours/src/detours.h)）和编译出的静态库以使用它们。
 
 ```C
-#include <KNSoft/SlimDetours/SlimDetours.h> // KNSoft.SlimDetours
-#include <KNSoft/SlimDetours/detours.h>     // Microsoft Detours
+/* KNSoft.SlimDetours */
+#include <KNSoft/SlimDetours/SlimDetours.h>
+#pragma comment(lib, "KNSoft.SlimDetours.lib")
+
+/* Microsoft Detours */
+#include <KNSoft/SlimDetours/detours.h>
+#pragma comment(lib, "Microsoft.Detours.lib")
 ```
 
-如果你项目的配置名称既不是“Release”也不是“Debug”，NuGet包中的[MSBuild表单](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/KNSoft.SlimDetours.targets)无法自动链接编译好的库，需要手动链接，例如：
+如果你项目的配置名称既不包含“Release”也不包含“Debug”，NuGet包中的[MSBuild表单](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/KNSoft.SlimDetours.targets)无法自动确定库路径的最后一层目录名（"Release"或"Debug"），需要手动加上它，例如：
 ```C
+#if DBG
 #pragma comment(lib, "Debug/KNSoft.SlimDetours.lib")
+#else
+#pragma comment(lib, "Release/KNSoft.SlimDetours.lib")
+#endif
 ```
 
 用法已进行了简化，例如挂钩仅需一行：
@@ -80,7 +87,7 @@ return SlimDetoursTransactionCommit();
 
 制品集成：广泛地兼容MSVC生成工具（已知支持VS2015），以及不同编译配置（如`/MD`、`/MT`）。
 
-运行环境：NT5及以上操作系统，x86/x64/ARM64平台。
+运行环境：NT5及以上操作系统，x86/x64/ARM64/ARM64EC目标平台。
 
 > [!CAUTION]
 > 处于beta阶段，应慎重使用。有些API可能频繁调整，请留意发行说明。

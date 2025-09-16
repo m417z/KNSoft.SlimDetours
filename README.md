@@ -30,18 +30,25 @@ And here is a [Todo List](https://github.com/KNSoft/KNSoft.SlimDetours/milestone
 
 ### TL;DR
 
-[KNSoft.SlimDetours package](https://www.nuget.org/packages/KNSoft.SlimDetours) is out-of-the-box, contains both of [SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours) and the original [Microsoft Detours](https://github.com/microsoft/Detours), install to project and the compiled library will be linked automatically.
-
-Include header [SlimDetours.h](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/SlimDetours/SlimDetours.h) for KNSoft.SlimDetours, or header [detours.h](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/Detours/src/detours.h) for the original [Microsoft Detours](https://github.com/microsoft/Detours), then link compiled library `KNSoft.SlimDetours.lib`.
+[KNSoft.SlimDetours package](https://www.nuget.org/packages/KNSoft.SlimDetours) is out-of-the-box, contains both of [KNSoft.SlimDetours](https://github.com/KNSoft/KNSoft.SlimDetours) and the latest [Microsoft Detours](https://github.com/microsoft/Detours), include corresponding header ([SlimDetours.h](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/SlimDetours/SlimDetours.h) or [detours.h](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/Microsoft.Detours/src/detours.h)) and compiled static library to use them.
 
 ```C
-#include <KNSoft/SlimDetours/SlimDetours.h> // KNSoft.SlimDetours
-#include <KNSoft/SlimDetours/detours.h>     // Microsoft Detours
+/* KNSoft.SlimDetours */
+#include <KNSoft/SlimDetours/SlimDetours.h>
+#pragma comment(lib, "KNSoft.SlimDetours.lib")
+
+/* Microsoft Detours */
+#include <KNSoft/SlimDetours/detours.h>
+#pragma comment(lib, "Microsoft.Detours.lib")
 ```
 
-If your project configuration name is neither "Release" nor "Debug", [MSBuild sheet](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/KNSoft.SlimDetours.targets) in NuGet package cannot link compiled library automatically, link manually is required, for example:
+If your project configuration name contains neither "Release" nor "Debug", [MSBuild sheet](https://github.com/KNSoft/KNSoft.SlimDetours/blob/main/Source/KNSoft.SlimDetours.targets) in NuGet package cannot determinate automatically the last level directory name ("Release" or "Debug") of library path should be used, add it manually is required, for example:
 ```C
+#if DBG
 #pragma comment(lib, "Debug/KNSoft.SlimDetours.lib")
+#else
+#pragma comment(lib, "Release/KNSoft.SlimDetours.lib")
+#endif
 ```
 
 The usage has been simplified, e.g. the hook only needs one line:
@@ -80,7 +87,7 @@ Project building: support for the latest MSVC generation tools and SDKs is mainl
 
 Artifact integration: widely compatible with MSVC generation tools (support for VS2015 is known), and different compilation configurations (e.g., `/MD`, `/MT`).
 
-Runtime environment: NT5 or above OS, x86/x64/ARM64 platforms.
+Runtime environment: NT5 or above OS, x86/x64/ARM64/ARM64EC target platforms.
 
 > [!CAUTION]
 > In beta stage, should be used with caution. Some APIs may be altered frequently, please keep an eye out for the release notes.
