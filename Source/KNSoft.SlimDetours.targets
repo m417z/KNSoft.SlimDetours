@@ -12,6 +12,9 @@
   <PropertyGroup Condition="$(Configuration.Contains(`Release`))">
     <LibraryPath>$(MSBuildThisFileDirectory)Lib\$(Platform)\Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
+  <PropertyGroup Condition="!$(Configuration.Contains(`Debug`)) and !$(Configuration.Contains(`Release`))">
+    <LibraryPath>$(MSBuildThisFileDirectory)Lib\$(Platform);$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
       <AdditionalDependencies>ntdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
