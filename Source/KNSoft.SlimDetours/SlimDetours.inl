@@ -19,6 +19,9 @@ EXTERN_C_START
 
 /* Basic structures */
 
+// ARM64 obTarget can reach 12 bytes, while obTrampoline can reach 72 bytes.
+// X86/X64 obTarget can reach 19 bytes (4 bytes plus a 15-byte instruction), while
+// obTrampoline spans the 30-byte rbCode buffer; both offsets require 5 bits.
 typedef struct _DETOUR_ALIGN
 {
     BYTE obTarget;
